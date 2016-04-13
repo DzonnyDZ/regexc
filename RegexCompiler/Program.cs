@@ -29,7 +29,7 @@ namespace Dzonny.RegexCompiler
             Version version;
             ParseCommandLine(args, out files, out assembly, out version, out postProcess);
 
-            Compile(files, assembly, version, postProcess);
+            new RegexCompiler().Compile(files, assembly, version, postProcess);
         }
         private static void ParseCommandLine(string[] args, out List<string> files, out string assembly, out Version version, out bool postProcess)
         {

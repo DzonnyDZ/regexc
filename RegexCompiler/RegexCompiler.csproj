@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>RegexCompiler.Program</StartupObject>
+    <StartupObject>Dzonny.RegexCompiler.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
@@ -82,7 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RegexHelpers\RegexHelpers.csproj">
-      <Project>{1e9c579c-688f-43bc-a90f-55cee326122a}</Project>
+      <Project>{B1BF5D57-9AE6-469A-8358-E9481A05B958}</Project>
       <Name>RegexHelpers</Name>
     </ProjectReference>
   </ItemGroup>

@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexCompiler", "RegexCompiler\RegexCompiler.csproj", "{844DE5A3-7FCE-48D5-8F25-88E4899E819D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexHelpers", "RegexHelpers\RegexHelpers.csproj", "{1E9C579C-688F-43BC-A90F-55CEE326122A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexTest", "RegexTest\RegexTest.csproj", "{E731C50C-ABCC-41A0-A086-A92698EE9A21}"
 	ProjectSection(ProjectDependencies) = postProject
 		{844DE5A3-7FCE-48D5-8F25-88E4899E819D} = {844DE5A3-7FCE-48D5-8F25-88E4899E819D}
@@ -16,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		GlobalAssemblyInfo.cs = GlobalAssemblyInfo.cs
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexHelpers", "RegexHelpers\RegexHelpers.csproj", "{B1BF5D57-9AE6-469A-8358-E9481A05B958}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,14 +27,14 @@ Global
 		{844DE5A3-7FCE-48D5-8F25-88E4899E819D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{844DE5A3-7FCE-48D5-8F25-88E4899E819D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{844DE5A3-7FCE-48D5-8F25-88E4899E819D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1E9C579C-688F-43BC-A90F-55CEE326122A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E9C579C-688F-43BC-A90F-55CEE326122A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E9C579C-688F-43BC-A90F-55CEE326122A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E9C579C-688F-43BC-A90F-55CEE326122A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E731C50C-ABCC-41A0-A086-A92698EE9A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E731C50C-ABCC-41A0-A086-A92698EE9A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E731C50C-ABCC-41A0-A086-A92698EE9A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E731C50C-ABCC-41A0-A086-A92698EE9A21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1BF5D57-9AE6-469A-8358-E9481A05B958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1BF5D57-9AE6-469A-8358-E9481A05B958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1BF5D57-9AE6-469A-8358-E9481A05B958}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1BF5D57-9AE6-469A-8358-E9481A05B958}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

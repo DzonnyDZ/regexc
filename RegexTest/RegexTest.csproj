@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RegexHelpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\RegexCompiler\bin\Debug\RegexHelpers.dll</HintPath>
+    </Reference>
     <Reference Include="RegularExpressionsLibrary, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\RegexCompiler\bin\Debug\RegularExpressionsLibrary.dll</HintPath>
@@ -56,15 +60,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RegexHelpers\RegexHelpers.csproj">
-      <Project>{1e9c579c-688f-43bc-a90f-55cee326122a}</Project>
-      <Name>RegexHelpers</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"$(SolutionDir)RegexCompiler\bin\$(ConfigurationName)\RegexCompiler.exe" "$(SolutionDir)RegexCompiler\bin\$(ConfigurationName)\regexes.txt" /nop
+    <PreBuildEvent>"$(SolutionDir)RegexCompiler\bin\$(ConfigurationName)\regexc.exe" "$(SolutionDir)RegexCompiler\bin\$(ConfigurationName)\regexes.txt" /nop
 "c:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools\peverify.exe" "$(SolutionDir)RegexCompiler\bin\$(ConfigurationName)\RegularExpressionsLibrary.dll"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

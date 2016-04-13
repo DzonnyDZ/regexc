@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 using IO = System.IO;
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using ParameterAttributes = Mono.Cecil.ParameterAttributes;
@@ -20,67 +21,9 @@ using TypeAttributes = Mono.Cecil.TypeAttributes;
 
 namespace Dzonny.RegexCompiler
 {
-    class RegexCompiler
+    public class RegexCompiler
     {
-        private enum ParamStates
-        {
-            Files,
-            AssemblyName,
-            Version
-        }
-        static void Main(string[] args)
-        {
-            if (args.Length == 0)
-            {
-                Console.WriteLine("Argument can be filenames containing regexes to compile or special arguments:");
-                Console.WriteLine("/assembly {name} - Name of assembly");
-                Console.WriteLine("/ver {version} - Assembly version");
-                Console.WriteLine("/nop - Just compile the regexes, don't add properties for named groups");
-            }
-
-            string assembly;
-            bool postProcess;
-            List<string> files;
-            Version version;
-            ParseCommandLine(args, out files, out assembly, out version, out postProcess);
-
-            Compile(files, assembly, version, postProcess);
-        }
-        private static void ParseCommandLine(string[] args, out List<string> files, out string assembly, out Version version, out bool postProcess)
-        {
-            ParamStates state = ParamStates.Files;
-            assembly = null;
-            postProcess = true;
-            files = new List<string>();
-            version = null;
-            foreach (string arg in args)
-            {
-                switch (state)
-                {
-                    case ParamStates.Files:
-                        switch (arg)
-                        {
-                            case "/assembly": state = ParamStates.AssemblyName; break;
-                            case "/nop": postProcess = false; break;
-                            case "/ver": state = ParamStates.Version; break;
-                            default: files.Add(arg); break;
-                        }
-                        break;
-                    case ParamStates.AssemblyName:
-                        if (assembly != null) throw new ArgumentException("Assembly name specified twice", "/assembly");
-                        assembly = arg;
-                        state = ParamStates.Files;
-                        break;
-                    case ParamStates.Version:
-                        if (version != null) throw new ArgumentException("Version specified twice", "/ver");
-                        version = Version.Parse(arg);
-                        state = ParamStates.Files;
-                        break;
-                }
-            }
-        }
-
-        private static void Compile(IEnumerable<string> files, string assemblyName, Version version = null, bool postProcess = true)
+        public  void Compile(IEnumerable<string> files, string assemblyName, Version version = null, bool postProcess = true)
         {
             List<RegexCompilationInfo> regexes = ProcessFiles(files);
             var an = new AssemblyName(assemblyName ?? "RegularExpressionsLibrary");
@@ -88,7 +31,7 @@ namespace Dzonny.RegexCompiler
             Compile(regexes, an, postProcess);
         }
 
-        private static List<RegexCompilationInfo> ProcessFiles(IEnumerable<string> files)
+        private List<RegexCompilationInfo> ProcessFiles(IEnumerable<string> files)
         {
             var regexes = new List<RegexCompilationInfo>();
             foreach (var file in files)
@@ -97,14 +40,14 @@ namespace Dzonny.RegexCompiler
         }
 
 
-        private static IList<RegexCompilationInfo> ProcessFile(string path)
+        private IList<RegexCompilationInfo> ProcessFile(string path)
         {
             using (var s = IO.File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read))
             using (var r = new IO.StreamReader(s))
                 return ProcessReader(r);
         }
 
-        private static IList<RegexCompilationInfo> ProcessReader(IO.TextReader reader)
+        private IList<RegexCompilationInfo> ProcessReader(IO.TextReader reader)
         {
             var regexes = new List<RegexCompilationInfo>();
             int fullLineNumber = 0;
@@ -124,7 +67,7 @@ namespace Dzonny.RegexCompiler
                     string trimmedLine = line.Trim();
                     try
                     {
-                        if (trimmedLine.StartsWith("#") || trimmedLine == string.Empty ) continue;
+                        if (trimmedLine.StartsWith("#") || trimmedLine == string.Empty) continue;
                         switch (blockLineNumber)
                         {
                             case 0:
@@ -191,7 +134,7 @@ namespace Dzonny.RegexCompiler
         }
 
 
-        private static RegexCompilationInfo BuildRegex(string regexText, string name, RegexOptions options, TimeSpan? timeout, bool @public)
+        private RegexCompilationInfo BuildRegex(string regexText, string name, RegexOptions options, TimeSpan? timeout, bool @public)
         {
             string @namespace = null;
             string simpleName = name.Contains('.') ? name.Substring(name.LastIndexOf('.') + 1) : name;
@@ -203,14 +146,14 @@ namespace Dzonny.RegexCompiler
             return i;
         }
 
-        private static void Compile(IList<RegexCompilationInfo> regexes, AssemblyName assemblyName, bool postProcess = true)
+        private void Compile(IList<RegexCompilationInfo> regexes, AssemblyName assemblyName, bool postProcess = true)
         {
             Regex.CompileToAssembly(regexes.ToArray(), assemblyName);
             if (postProcess)
                 PostProcess(regexes, assemblyName);
         }
 
-        private static void PostProcess(IList<RegexCompilationInfo> regexCompilationInfos, AssemblyName assemblyName)
+        private void PostProcess(IList<RegexCompilationInfo> regexCompilationInfos, AssemblyName assemblyName)
         {
             var assemblyPath = assemblyName.Name + ".dll";
             var asm = AssemblyDefinition.ReadAssembly(assemblyPath);
@@ -324,7 +267,7 @@ namespace Dzonny.RegexCompiler
             asm.Write(assemblyPath);
         }
 
-        private static void ChangeRegexClassBaseType(TypeDefinition regexClass, TypeReference trRegexBase, MethodReference ctorRegexBase, MethodDefinition ctorRegexResolved)
+        private void ChangeRegexClassBaseType(TypeDefinition regexClass, TypeReference trRegexBase, MethodReference ctorRegexBase, MethodDefinition ctorRegexResolved)
         {
             regexClass.BaseType = trRegexBase;
             foreach (var mtd in regexClass.Methods)
@@ -343,7 +286,7 @@ namespace Dzonny.RegexCompiler
             }
         }
 
-        private static TypeDefinition CreateMatchClass(
+        private TypeDefinition CreateMatchClass(
             string regexName, string[] groups, TypeReference trGroup, TypeReference trMatchBase, TypeReference trMatch, TypeReference trVoid, MethodReference ctorMatchBase,
             MethodReference getGroupCollection_Item, MethodReference getMatch_Groups, MethodReference getMatchBase_Groups
         )
@@ -363,7 +306,7 @@ namespace Dzonny.RegexCompiler
             return defMatchClass;
         }
 
-        private static MethodDefinition CreateMatchClassCTor(TypeReference trMatch, TypeReference trVoid, MethodReference ctorMatchBase)
+        private MethodDefinition CreateMatchClassCTor(TypeReference trMatch, TypeReference trVoid, MethodReference ctorMatchBase)
         {
             //MatchClass..ctor
             var ctor = new MethodDefinition(".ctor", MethodAttributes.Assembly | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName, trVoid)
@@ -402,7 +345,7 @@ namespace Dzonny.RegexCompiler
             return new PropertyDefinition(groupName, PropertyAttributes.None, trGroup) { GetMethod = getter };
         }
 
-        private static MethodDefinition CreateRegexClassMatchFunction_String
+        private MethodDefinition CreateRegexClassMatchFunction_String
             (TypeReference trMatchClass, TypeReference trRegex, TypeReference trString, MethodReference ctorMatchClass, MethodReference mtdRegex_Match_string)
         {
             var m = new MethodDefinition("Match", MethodAttributes.Public, trMatchClass)
@@ -437,7 +380,7 @@ namespace Dzonny.RegexCompiler
             return m;
         }
 
-        private static MethodDefinition CreateRegexClassMatchFunction_String_Int32_Int32
+        private MethodDefinition CreateRegexClassMatchFunction_String_Int32_Int32
             (TypeReference trInt32, TypeReference trMatchClass, TypeReference trRegex, TypeReference trString, MethodReference ctorMatchClass, MethodReference mtdRegex_Match_string_int_int)
         {
             var m = new MethodDefinition("Match", MethodAttributes.Public, trMatchClass)
@@ -462,7 +405,7 @@ namespace Dzonny.RegexCompiler
             return m;
         }
 
-        private static MethodDefinition CreateRegexClassMatchesFunction_String(
+        private MethodDefinition CreateRegexClassMatchesFunction_String(
             TypeReference trIEnumerable, TypeReference trIEnumerator, TypeReference trIReadOnlyCollection_MatchClass, TypeReference trList_MatchClass, TypeReference trMatch, TypeReference trString,
             MethodReference ctorList_MatchClass, MethodReference ctorMatchClass, MethodReference getIEnumerator_Current, MethodReference getMatchBase_RegexMatch, MethodReference mtdIEnumerable_GetEnumerator,
             MethodReference mtdIEnumerator_MoveNext, MethodReference mtdList_MatchClass_Add, MethodReference mtdRegex_Matches_string
@@ -483,7 +426,7 @@ namespace Dzonny.RegexCompiler
             return m;
         }
 
-        private static MethodDefinition CreateRegexClassMatchesFunction_String_Int32(
+        private MethodDefinition CreateRegexClassMatchesFunction_String_Int32(
             TypeReference trIEnumerable, TypeReference trIEnumerator, TypeReference trInt32, TypeReference trIReadOnlyCollection_MatchClass, TypeReference trList_MatchClass, TypeReference trMatch,
             TypeReference trString, MethodReference ctorList_MatchClass, MethodReference ctorMatchClass, MethodReference getIEnumerator_Current, MethodReference getMatchBase_RegexMatch,
             MethodReference mtdIEnumerable_GetEnumerator, MethodReference mtdIEnumerator_MoveNext, MethodReference mtdList_MatchClass_Add, MethodReference mtdRegex_Matches_string_int
@@ -510,9 +453,9 @@ namespace Dzonny.RegexCompiler
             return m;
         }
 
-        private static void GenerateMatchesMethodBody(
-            MethodDefinition m, ILProcessor il, TypeReference trIEnumerator, TypeReference trList_MatchClass, TypeReference trMatch, MethodReference ctorList_MatchClass,MethodReference ctorMatchClass,
-            MethodReference getIEnumerator_Current, MethodReference mtdIEnumerable_GetEnumerator, MethodReference mtdIEnumerator_MoveNext, MethodReference mtdList_MatchClass_Add, 
+        private void GenerateMatchesMethodBody(
+            MethodDefinition m, ILProcessor il, TypeReference trIEnumerator, TypeReference trList_MatchClass, TypeReference trMatch, MethodReference ctorList_MatchClass, MethodReference ctorMatchClass,
+            MethodReference getIEnumerator_Current, MethodReference mtdIEnumerable_GetEnumerator, MethodReference mtdIEnumerator_MoveNext, MethodReference mtdList_MatchClass_Add,
             Func<int, int> generateBaseCall
         )
         {

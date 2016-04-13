@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Dzonny.RegexCompiler
 {
-    public class UnicodeTextReader : TextReader
+    internal class UnicodeTextReader : TextReader
     {
         private readonly TextReader inner;
 
