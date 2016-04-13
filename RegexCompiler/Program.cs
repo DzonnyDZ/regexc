@@ -10,9 +10,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Cecil.Rocks;
-using RegexHelpers;
-using static System.Globalization.CultureInfo;
 using IO = System.IO;
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using ParameterAttributes = Mono.Cecil.ParameterAttributes;
@@ -21,7 +18,7 @@ using TypeAttributes = Mono.Cecil.TypeAttributes;
 
 // ReSharper disable InconsistentNaming
 
-namespace RegexCompiler
+namespace Dzonny.RegexCompiler
 {
     class Program
     {
@@ -127,7 +124,7 @@ namespace RegexCompiler
                     string trimmedLine = line.Trim();
                     try
                     {
-                        if (line.StartsWith("#")) continue;
+                        if (trimmedLine.StartsWith("#") || trimmedLine == string.Empty ) continue;
                         switch (blockLineNumber)
                         {
                             case 0:
@@ -155,7 +152,7 @@ namespace RegexCompiler
                                 }
                                 else if (trimmedLine.StartsWith("Timeout:", StringComparison.InvariantCultureIgnoreCase))
                                 {
-                                    timeout = TimeSpan.Parse(line.Substring(8).Trim(), InvariantCulture);
+                                    timeout = TimeSpan.Parse(line.Substring(8).Trim(), CultureInfo.InvariantCulture);
                                 }
                                 else
                                     goto default;
@@ -267,7 +264,7 @@ namespace RegexCompiler
                 var regex = regexes[regexClass.FullName];
                 ChangeRegexClassBaseType(regexClass, trRegexBase, ctorRegexBase, ctorRegexResolved);
                 int ignore;
-                var groups = regex.GetGroupNames().Where(gn => !int.TryParse(gn, NumberStyles.Any, InvariantCulture, out ignore)).ToArray();
+                var groups = regex.GetGroupNames().Where(gn => !int.TryParse(gn, NumberStyles.Any, CultureInfo.InvariantCulture, out ignore)).ToArray();
                 TypeReference trIReadOnlyCollection_MatchClass;
                 TypeReference trList_MatchClass;
                 TypeReference trMatchClass;

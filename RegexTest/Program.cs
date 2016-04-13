@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace RegexTest
+namespace Dzonny.RegexCompiler.Tests
 {
     class Program
     {

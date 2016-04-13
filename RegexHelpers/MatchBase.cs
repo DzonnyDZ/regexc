@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace RegexHelpers
+namespace Dzonny.RegexCompiler
 {
     public abstract class MatchBase
     {
