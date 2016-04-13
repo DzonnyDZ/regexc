@@ -1,0 +1,7 @@
+﻿Name: Regex1
+Options: None 
+[^1]
+------
+Name: R2D2
+Options: ExplicitCapture
+(?<Month>\d{1,2})/(?<Day>\d{1,2})/(?<Year>(?:\d{4}|\d{2}))
