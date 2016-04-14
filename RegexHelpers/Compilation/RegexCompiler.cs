@@ -19,36 +19,134 @@ using TypeAttributes = Mono.Cecil.TypeAttributes;
 
 // ReSharper disable InconsistentNaming
 
-namespace Dzonny.RegexCompiler
+namespace Dzonny.RegexCompiler.Compilation
 {
+    /// <summary>Regular expression compiler</summary>
     public class RegexCompiler
     {
-        public  void Compile(IEnumerable<string> files, string assemblyName, Version version = null, bool postProcess = true)
+        /// <summary>Gets copy of <see cref="RegexCompilationSettings"/> passed to <see cref=".ctor(RegexCompilationSettings)">constructor</see></summary>
+        protected RegexCompilationSettings Settings { get; }
+        /// <summary>CTor - creates a new instance of the <see cref="RegexCompiler"/> class</summary>
+        /// <param name="settings">Indicates which files to compile and compilation options</param>
+        /// <remarks><paramref name="settings"/>.<see cref="RegexCompilationSettings.Files">Files</see> can be empty, but then you cannot use <see cref="Compile()"/> method.</remarks>
+        public RegexCompiler(RegexCompilationSettings settings)
         {
-            List<RegexCompilationInfo> regexes = ProcessFiles(files);
-            var an = new AssemblyName(assemblyName ?? "RegularExpressionsLibrary");
-            if (version != null) an.Version = version;
-            Compile(regexes, an, postProcess);
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            this.Settings = settings.Clone();
         }
 
-        private List<RegexCompilationInfo> ProcessFiles(IEnumerable<string> files)
+        /// <summary>Compiles regular expressions from files provided in <see cref=".ctor(RegexCompilationSettings)">constructor</see></summary>
+        /// <exception cref="InvalidOperationException"><see cref="RegexCompilationSettings.Files"/> passed to <see cref=".ctor(RegexCompilationSettings)">constructor</see> don't contain any files</exception>
+        public void Compile()
         {
+            if (Settings.Files.Count == 0) throw new InvalidOperationException("No files specified in compilation settings");
+            Compile(new Tuple<IO.TextReader, string>[] {}, false);
+        }
+
+        /// <summary>Creates <see cref="AssemblyName"/> from <see cref="Settings"/></summary>
+        private AssemblyName GetAssemblyName() => new AssemblyName(Settings.AssemblyName) { Version = Settings.Version };
+
+        #region Compile
+        /// <summary>Compiles regular expressions from files</summary>
+        /// <param name="files">Files containing regular expression definitions. Each file can contain multiple regular expressions. Files must be in defined format.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="files"/> is null</exception>
+        /// <remarks><see cref="RegexCompilationSettings.Files"/> and <paramref name="files"/> are concatenated</remarks>
+        public void Compile(params string[] files) => Compile((IEnumerable<string>)files);
+
+        /// <summary>Compiles regular expressions from files</summary>
+        /// <param name="files">Files containing regular expression definitions. Each file can contain multiple regular expressions. Files must be in defined format.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="files"/> is null</exception>
+        /// <remarks><see cref="RegexCompilationSettings.Files"/> and <paramref name="files"/> are concatenated</remarks>
+        public void Compile(IEnumerable<string> files)
+        {
+            if (files == null) throw new ArgumentNullException(nameof(files));
+            Compile(
+                from f in files
+                select Tuple.Create((IO.TextReader)new IO.StreamReader(IO.File.Open(f, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)), f),
+                true
+                );
+        }
+
+        /// <summary>Compiles regular expressions from text readers</summary>
+        /// <param name="readers">Readers reading content of files containing regular expression definitions. Each reader can read multiple regular expressions. Text must be in defined format.</param>
+        /// <remarks><see cref="RegexCompilationSettings.Files"/> and <paramref name="readers"/> are concatenated</remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="readers"/> is null</exception>
+        public void Compile(params IO.TextReader[] readers) => Compile((IEnumerable<IO.TextReader>)readers);
+
+        /// <summary>Compiles regular expressions from text readers</summary>
+        /// <param name="readers">Readers reading content of files containing regular expression definitions. Each reader can read multiple regular expressions. Text must be in defined format.</param>
+        /// <remarks>
+        /// <see cref="RegexCompilationSettings.Files"/> and <paramref name="readers"/> are concatenated.
+        /// <para>Readers from <paramref name="readers"/> won't be disposed. It's caller's responsibility to dispose them.</para>
+        /// </remarks>
+        /// <exception cref="ArgumentNullException"><paramref name="readers"/> is null</exception>
+        public void Compile(IEnumerable<IO.TextReader> readers)
+        {
+            if (readers == null) throw new ArgumentNullException(nameof(readers));
+            Compile(from r in readers select Tuple.Create(r, default(string)), false);
+        }
+
+        /// <summary>Compiles regular expressions from text readers with provided file names</summary>
+        /// <param name="sources">Contains text readers and file names the readers are reading. File names can be null.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="sources"/> is null</exception>
+        public void Compile(IEnumerable<Tuple<IO.TextReader, string>> sources) => Compile(sources, false);
+
+        /// <summary>Compiles regular expressions from text readers with provided file names</summary>
+        /// <param name="sources">Contains text readers and file names the readers are reading. File names can be null.</param>
+        /// <param name="disposeReaders">
+        /// True to dispose readers after they are read. False to leave them open.
+        /// When true only create the readers in <see cref="IEnumerable.MoveNext"/> (i.e. in <see cref="Enumerable.Select{TSource, TResult}(IEnumerable{TSource}, Func{TSource, TResult})"/>).
+        /// Readers that were not encountered won't be disposed!
+        /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="sources"/> is null</exception>
+        protected virtual void Compile(IEnumerable<Tuple<IO.TextReader, string>> sources, bool disposeReaders)
+        {
+            if (sources == null) throw new ArgumentNullException(nameof(sources));
+
             var regexes = new List<RegexCompilationInfo>();
-            foreach (var file in files)
-                regexes.AddRange(ProcessFile(file));
-            return regexes;
+            var srcs = (from f in Settings.Files select Tuple.Create((IO.TextReader)new IO.StreamReader(IO.File.Open(f, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)), f, true))
+                       .Concat(
+                        from x in sources select Tuple.Create(x.Item1, x.Item2, disposeReaders)
+                       );
+
+            foreach (var source in srcs)
+            {
+                try
+                {
+                    regexes.AddRange(Read(source.Item1, source.Item2));
+                }
+                finally
+                {
+                    if (source.Item3) source.Item1.Dispose();
+                }
+            }
+            Compile(regexes);
         }
 
-
-        private IList<RegexCompilationInfo> ProcessFile(string path)
+        /// <summary>Compiles regular expressions from <see cref="RegexCompilationInfo"/>s</summary>
+        /// <param name="regexes"><see cref="RegexCompilationInfo"/>s specifying the regular expressions to compile.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="regexes"/>is null</exception>
+        public virtual void Compile(IEnumerable<RegexCompilationInfo> regexes)
         {
-            using (var s = IO.File.Open(path, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read))
-            using (var r = new IO.StreamReader(s))
-                return ProcessReader(r);
+            if (regexes == null) throw new ArgumentNullException(nameof(regexes));
+            var an = GetAssemblyName();
+            var arr = regexes.ToArray();
+            Regex.CompileToAssembly(arr, an);
+            if (Settings.PostProcess)
+                PostProcess(arr, an);
         }
+        #endregion
 
-        private IList<RegexCompilationInfo> ProcessReader(IO.TextReader reader)
+        /// <summary>Reads regular expression definitions from text reader</summary>
+        /// <param name="reader">Reader to read the definitions from</param>
+        /// <param name="path">Path of file reader was opened from (optional)</param>
+        /// <returns>Regular expression definitions read from <paramref name="reader"/></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null</exception>
+        protected virtual IEnumerable<RegexCompilationInfo> Read(IO.TextReader reader, string path = null)
         {
+            if (reader == null) throw new ArgumentNullException(nameof(reader));
+            //TODO: Report lines and files
+
             var regexes = new List<RegexCompilationInfo>();
             int fullLineNumber = 0;
             int blockLineNumber = 0;
@@ -59,7 +157,7 @@ namespace Dzonny.RegexCompiler
             TimeSpan? timeout = null;
             bool @public = true;
 
-            using (var r = new UnicodeTextReader(reader))
+            using (var r = new UnicodeNewlineTextReader(reader))
             {
                 string line;
                 while ((line = r.ReadLine()) != null)
@@ -101,7 +199,7 @@ namespace Dzonny.RegexCompiler
                                     goto default;
                                 break;
                             default:
-                                if (trimmedLine.StartsWith("------")) //6*
+                                if (trimmedLine.StartsWith("------")) //6×
                                 {
                                     regexes.Add(BuildRegex(regex.ToString(), name, options, timeout, @public));
                                     blockLineNumber = 0;
@@ -133,8 +231,14 @@ namespace Dzonny.RegexCompiler
             return regexes;
         }
 
-
-        private RegexCompilationInfo BuildRegex(string regexText, string name, RegexOptions options, TimeSpan? timeout, bool @public)
+        /// <summary>Creates <see cref="RegexCompilationInfo"/></summary>
+        /// <param name="regexText">Regular expression pattern</param>
+        /// <param name="name">Name of the regular expression</param>
+        /// <param name="options">Regex options</param>
+        /// <param name="timeout">Execution timeout</param>
+        /// <param name="public">Is the regex public (internal/assembly when false)</param>
+        /// <returns><see cref="RegexCompilationInfo"/> created from given parameters</returns>
+        protected virtual RegexCompilationInfo BuildRegex(string regexText, string name, RegexOptions options, TimeSpan? timeout, bool @public)
         {
             string @namespace = null;
             string simpleName = name.Contains('.') ? name.Substring(name.LastIndexOf('.') + 1) : name;
@@ -146,14 +250,7 @@ namespace Dzonny.RegexCompiler
             return i;
         }
 
-        private void Compile(IList<RegexCompilationInfo> regexes, AssemblyName assemblyName, bool postProcess = true)
-        {
-            Regex.CompileToAssembly(regexes.ToArray(), assemblyName);
-            if (postProcess)
-                PostProcess(regexes, assemblyName);
-        }
-
-        private void PostProcess(IList<RegexCompilationInfo> regexCompilationInfos, AssemblyName assemblyName)
+        protected virtual void PostProcess(IEnumerable<RegexCompilationInfo> regexCompilationInfos, AssemblyName assemblyName)
         {
             var assemblyPath = assemblyName.Name + ".dll";
             var asm = AssemblyDefinition.ReadAssembly(assemblyPath);

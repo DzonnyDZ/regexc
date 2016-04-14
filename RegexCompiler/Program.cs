@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-
-// ReSharper disable InconsistentNaming
+using Dzonny.RegexCompiler.Compilation;
 
 namespace Dzonny.RegexCompiler
 {
-    class Program
+    /// <summary>Entry point of regexc application</summary>
+    internal class RegexC
     {
-        private enum ParamStates
-        {
-            Files,
-            AssemblyName,
-            Version
-        }
+
+        /// <summary>Entry point method</summary>
+        /// <param name="args">Command line arguments</param>
         static void Main(string[] args)
         {
             if (args.Length == 0)
@@ -21,23 +17,49 @@ namespace Dzonny.RegexCompiler
                 Console.WriteLine("/assembly {name} - Name of assembly");
                 Console.WriteLine("/ver {version} - Assembly version");
                 Console.WriteLine("/nop - Just compile the regexes, don't add properties for named groups");
+                Environment.Exit(1);
             }
 
-            string assembly;
-            bool postProcess;
-            List<string> files;
-            Version version;
-            ParseCommandLine(args, out files, out assembly, out version, out postProcess);
+            RegexCompilationSettings settings;
+            try
+            {
+                settings = ParseCommandLine(args);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                Environment.Exit(2);
+                return;
+            }
 
-            new RegexCompiler().Compile(files, assembly, version, postProcess);
+            var compiler = new Compilation.RegexCompiler(settings);
+            compiler.Compile();
         }
-        private static void ParseCommandLine(string[] args, out List<string> files, out string assembly, out Version version, out bool postProcess)
+
+        /// <summary>Reads command line arguments</summary>
+        /// <summary>States of FSA reading command line parameters</summary>
+        private enum ParamStates
         {
+            /// <summary>Expects file or parameter</summary>
+            Files,
+            /// <summary>Value for /assembly parameter</summary>
+            AssemblyName,
+            /// <summary>Value for /ver parameter</summary>
+            Version
+        }
+
+        /// <param name="args">Command line arguments</param>
+        /// <returns>Compilation setup</returns>
+        /// <exception cref="ArgumentException">
+        /// A command line argument which cannot be repeated is specified more than once -or-
+        /// No files are specified.
+        /// </exception>
+        private static RegexCompilationSettings ParseCommandLine(string[] args)
+        {
+            var ret = new RegexCompilationSettings();
+            bool assemblyNameRead = false;
+            bool versionRead = false;
             ParamStates state = ParamStates.Files;
-            assembly = null;
-            postProcess = true;
-            files = new List<string>();
-            version = null;
             foreach (string arg in args)
             {
                 switch (state)
@@ -46,23 +68,27 @@ namespace Dzonny.RegexCompiler
                         switch (arg)
                         {
                             case "/assembly": state = ParamStates.AssemblyName; break;
-                            case "/nop": postProcess = false; break;
+                            case "/nop": ret.PostProcess = false; break;
                             case "/ver": state = ParamStates.Version; break;
-                            default: files.Add(arg); break;
+                            default: ret.Files.Add(arg); break;
                         }
                         break;
                     case ParamStates.AssemblyName:
-                        if (assembly != null) throw new ArgumentException("Assembly name specified twice", "/assembly");
-                        assembly = arg;
+                        if (assemblyNameRead) throw new ArgumentException("Assembly name specified twice", "/assembly");
+                        assemblyNameRead = true;
+                        ret.AssemblyName = arg;
                         state = ParamStates.Files;
                         break;
                     case ParamStates.Version:
-                        if (version != null) throw new ArgumentException("Version specified twice", "/ver");
-                        version = Version.Parse(arg);
+                        if (versionRead) throw new ArgumentException("Version specified twice", "/ver");
+                        versionRead = true;
+                        ret.Version = Version.Parse(arg);
                         state = ParamStates.Files;
                         break;
                 }
             }
+            if (ret.Files.Count == 0) throw new ArgumentException("No files specified");
+            return ret;
         }
     }
 }
