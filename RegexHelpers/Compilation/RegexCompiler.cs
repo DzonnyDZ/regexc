@@ -40,7 +40,7 @@ namespace Dzonny.RegexCompiler.Compilation
         public void Compile()
         {
             if (Settings.Files.Count == 0) throw new InvalidOperationException("No files specified in compilation settings");
-            Compile(new Tuple<IO.TextReader, string>[] {}, false);
+            Compile(new Tuple<IO.TextReader, string>[] { }, false);
         }
 
         /// <summary>Creates <see cref="AssemblyName"/> from <see cref="Settings"/></summary>
@@ -60,11 +60,13 @@ namespace Dzonny.RegexCompiler.Compilation
         public void Compile(IEnumerable<string> files)
         {
             if (files == null) throw new ArgumentNullException(nameof(files));
+#pragma warning disable CC0022 // Should dispose object
             Compile(
                 from f in files
                 select Tuple.Create((IO.TextReader)new IO.StreamReader(IO.File.Open(f, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)), f),
                 true
-                );
+            );
+#pragma warning restore CC0022 // Should dispose object
         }
 
         /// <summary>Compiles regular expressions from text readers</summary>
@@ -95,7 +97,7 @@ namespace Dzonny.RegexCompiler.Compilation
         /// <param name="sources">Contains text readers and file names the readers are reading. File names can be null.</param>
         /// <param name="disposeReaders">
         /// True to dispose readers after they are read. False to leave them open.
-        /// When true only create the readers in <see cref="IEnumerable.MoveNext"/> (i.e. in <see cref="Enumerable.Select{TSource, TResult}(IEnumerable{TSource}, Func{TSource, TResult})"/>).
+        /// When true only create the readers in <see cref="IEnumerator.MoveNext"/> (i.e. in <see cref="Enumerable.Select{TSource, TResult}(IEnumerable{TSource}, Func{TSource, TResult})"/>).
         /// Readers that were not encountered won't be disposed!
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="sources"/> is null</exception>
@@ -104,10 +106,12 @@ namespace Dzonny.RegexCompiler.Compilation
             if (sources == null) throw new ArgumentNullException(nameof(sources));
 
             var regexes = new List<RegexCompilationInfo>();
+#pragma warning disable CC0022 // Should dispose object
             var srcs = (from f in Settings.Files select Tuple.Create((IO.TextReader)new IO.StreamReader(IO.File.Open(f, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)), f, true))
                        .Concat(
                         from x in sources select Tuple.Create(x.Item1, x.Item2, disposeReaders)
                        );
+#pragma warning restore CC0022 // Should dispose object
 
             foreach (var source in srcs)
             {
@@ -120,7 +124,8 @@ namespace Dzonny.RegexCompiler.Compilation
                     if (source.Item3) source.Item1.Dispose();
                 }
             }
-            Compile(regexes);
+            if (Settings.MessageSink.ErrorCount == 0)
+                Compile(regexes);
         }
 
         /// <summary>Compiles regular expressions from <see cref="RegexCompilationInfo"/>s</summary>
@@ -170,7 +175,10 @@ namespace Dzonny.RegexCompiler.Compilation
                         {
                             case 0:
                                 if (!trimmedLine.StartsWith("Name:", StringComparison.InvariantCultureIgnoreCase))
-                                    throw new SyntaxErrorException($"1st line of regex block must start with 'Name:', line {fullLineNumber}");
+                                {
+                                    Settings.MessageSink.Report(RegexCompilerMessageSeverity.Error, "1st line of regex block must start with 'Name:'", path, fullLineNumber + 1, 1);
+                                    return regexes;
+                                }
                                 name = line.Substring(5).Trim();
                                 break;
                             case 1:

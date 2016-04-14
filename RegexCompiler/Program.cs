@@ -34,6 +34,8 @@ namespace Dzonny.RegexCompiler
 
             var compiler = new Compilation.RegexCompiler(settings);
             compiler.Compile();
+            Console.WriteLine($"{settings.MessageSink.ErrorCount} errors, {settings.MessageSink.WarningCount} warnings");
+            if (settings.MessageSink.ErrorCount > 0) Environment.Exit(3);
         }
 
         /// <summary>Reads command line arguments</summary>

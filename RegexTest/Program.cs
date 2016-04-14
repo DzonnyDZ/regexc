@@ -5,7 +5,7 @@ namespace Dzonny.RegexCompiler.Tests
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var r1 = new Regex1();
             var m1 = r1.Match("7");
