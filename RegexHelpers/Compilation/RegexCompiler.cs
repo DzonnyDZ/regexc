@@ -313,72 +313,115 @@ namespace Dzonny.RegexCompiler.Compilation
             return i;
         }
 
+        private TypeReference trGroup;
+        private TypeReference trRegex;
+        private TypeReference trMatchBase;
+        private TypeReference trRegexBase;
+        private TypeReference trMatch;
+        private TypeReference trString;
+        private TypeReference trVoid;
+        private TypeReference trInt32;
+        private TypeReference trNonNamedMatch;
+        private TypeReference trIEnumerable;
+        private TypeReference trIEnumerator;
+        private TypeReference trList1;
+        private TypeReference trList_NonNamedMatch;
+        private TypeReference trIReadOnlyCollection1;
+        private TypeReference trIReadOnlyCollection_NonNamedMatch;
+        private TypeReference trSecurityRuleSet;
+
+        private MethodReference getMatch_Groups;
+        MethodReference getMatchBase_Groups;
+        MethodReference getMatchBase_RegexMatch;
+        MethodReference getGroupCollection_Item;
+        MethodReference getIEnumerator_Current;
+        MethodReference ctorMatchBase;
+        MethodReference ctorNonNamedMatch;
+        MethodReference ctorList_NonNamedMatch;
+        MethodReference ctorSecurityRulesAttributes;
+        MethodReference ctorRegex;
+        MethodReference ctorRegexBase;
+        MethodReference mtdRegex_Match_string;
+        MethodReference mtdRegex_Match_string_int;
+        MethodReference mtdRegex_Match_string_int_int;
+        MethodReference mtdRegex_Matches_string;
+        MethodReference mtdRegex_Matches_string_int;
+        MethodReference mtdIEnumerable_GetEnumerator;
+        MethodReference mtdIEnumerator_MoveNext;
+        MethodReference mtdList_NonNamedMatch_Add;
+        private MethodReference ctorRegexResolved;
+
+        //Changed in foreach
+        TypeReference trIReadOnlyCollection_MatchClass;
+        TypeReference trList_MatchClass;
+        TypeReference trMatchClass;
+        MethodReference ctorList_MatchClass;
+        MethodReference ctorMatchClass;
+        MethodReference mtdList_MatchClass_Add;
+
+        private void InitializeMetadataReferences(AssemblyDefinition asm)
+        {
+            trGroup = asm.MainModule.Import(typeof(Group));
+            trRegex = asm.MainModule.Import(typeof(Regex));
+            trMatchBase = asm.MainModule.Import(typeof(MatchBase));
+            trRegexBase = asm.MainModule.Import(typeof(RegexBase));
+            trMatch = asm.MainModule.Import(typeof(Match));
+            trString = asm.MainModule.Import(typeof(String));
+            trVoid = asm.MainModule.Import(typeof(void));
+            trInt32 = asm.MainModule.Import(typeof(Int32));
+            trNonNamedMatch = asm.MainModule.Import(typeof(NonNamedMatch));
+            trIEnumerable = asm.MainModule.Import(typeof(IEnumerable));
+            trIEnumerator = asm.MainModule.Import(typeof(IEnumerator));
+            trList1 = asm.MainModule.Import(typeof(List<>));
+            trList_NonNamedMatch = trList1.MakeGenericInstanceType(trNonNamedMatch);
+            trIReadOnlyCollection1 = asm.MainModule.Import(typeof(IReadOnlyCollection<>));
+            trIReadOnlyCollection_NonNamedMatch = trIReadOnlyCollection1.MakeGenericInstanceType(trNonNamedMatch);
+            trSecurityRuleSet = asm.MainModule.Import(typeof(SecurityRuleSet));
+
+            getMatch_Groups = asm.MainModule.Import(typeof(Match).GetProperty(nameof(Match.Groups)).GetMethod);
+            getMatchBase_Groups = asm.MainModule.Import(typeof(MatchBase).GetProperty(nameof(MatchBase.Groups)).GetMethod);
+            getMatchBase_RegexMatch = asm.MainModule.Import(typeof(MatchBase).GetProperty(nameof(MatchBase.RegexMatch)).GetMethod);
+            getGroupCollection_Item = asm.MainModule.Import(typeof(GroupCollection).GetProperty("Item", new[] { typeof(string) }).GetMethod);
+            getIEnumerator_Current = asm.MainModule.Import(typeof(IEnumerator).GetProperty(nameof(IEnumerator.Current)).GetMethod);
+            ctorMatchBase = asm.MainModule.Import(typeof(MatchBase).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(Match) }, null));
+            ctorNonNamedMatch = asm.MainModule.Import(typeof(NonNamedMatch).GetConstructor(new[] { typeof(Match) }));
+            ctorList_NonNamedMatch = asm.MainModule.Import(typeof(List<NonNamedMatch>).GetConstructor(Type.EmptyTypes));
+            ctorSecurityRulesAttributes = asm.MainModule.Import(typeof(SecurityRulesAttribute).GetConstructor(new[] { typeof(SecurityRuleSet) }));
+            ctorRegex = asm.MainModule.Import(typeof(Regex).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null));
+            ctorRegexBase = asm.MainModule.Import(typeof(RegexBase).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null));
+            mtdRegex_Match_string = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Match), new[] { typeof(string) }));
+            mtdRegex_Match_string_int = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Match), new[] { typeof(string), typeof(int) }));
+            mtdRegex_Match_string_int_int = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Match), new[] { typeof(string), typeof(int), typeof(int) }));
+            mtdRegex_Matches_string = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Matches), new[] { typeof(string) }));
+            mtdRegex_Matches_string_int = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Matches), new[] { typeof(string), typeof(int) }));
+            mtdIEnumerable_GetEnumerator = asm.MainModule.Import(typeof(IEnumerable).GetMethod(nameof(IEnumerable.GetEnumerator)));
+            mtdIEnumerator_MoveNext = asm.MainModule.Import(typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext)));
+            mtdList_NonNamedMatch_Add = asm.MainModule.Import(typeof(List<NonNamedMatch>).GetMethod(nameof(List<NonNamedMatch>.Add)));
+            ctorRegexResolved = ctorRegex.Resolve();
+        }
+
         /// <summary>Post-processes and assembly generated by <see cref="Regex.CompileToAssembly(RegexCompilationInfo[], AssemblyName)"/></summary>
         /// <param name="assemblyPath">Path of the assembly (DLL)</param>
-        /// <param name="regexCompilationInfos">Information about regexes compiled to tzhe assembly</param>
+        /// <param name="regexCompilationInfos">Information about regexes compiled to the assembly</param>
         protected virtual void PostProcess(string assemblyPath, IEnumerable<RegexCompilationInfo> regexCompilationInfos)
         {
             var asm = AssemblyDefinition.ReadAssembly(assemblyPath);
-
-            var trGroup = asm.MainModule.Import(typeof(Group));
-            var trRegex = asm.MainModule.Import(typeof(Regex));
-            var trMatchBase = asm.MainModule.Import(typeof(MatchBase));
-            var trRegexBase = asm.MainModule.Import(typeof(RegexBase));
-            var trMatch = asm.MainModule.Import(typeof(Match));
-            var trString = asm.MainModule.Import(typeof(String));
-            var trVoid = asm.MainModule.Import(typeof(void));
-            var trInt32 = asm.MainModule.Import(typeof(Int32));
-            var trNonNamedMatch = asm.MainModule.Import(typeof(NonNamedMatch));
-            var trIEnumerable = asm.MainModule.Import(typeof(IEnumerable));
-            var trIEnumerator = asm.MainModule.Import(typeof(IEnumerator));
-            var trList1 = asm.MainModule.Import(typeof(List<>));
-            var trList_NonNamedMatch = trList1.MakeGenericInstanceType(trNonNamedMatch);
-            var trIReadOnlyCollection1 = asm.MainModule.Import(typeof(IReadOnlyCollection<>));
-            var trIReadOnlyCollection_NonNamedMatch = trIReadOnlyCollection1.MakeGenericInstanceType(trNonNamedMatch);
-            var trSecurityRuleSet = asm.MainModule.Import(typeof(SecurityRuleSet));
-
-            var getMatch_Groups = asm.MainModule.Import(typeof(Match).GetProperty(nameof(Match.Groups)).GetMethod);
-            var getMatchBase_Groups = asm.MainModule.Import(typeof(MatchBase).GetProperty(nameof(MatchBase.Groups)).GetMethod);
-            var getMatchBase_RegexMatch = asm.MainModule.Import(typeof(MatchBase).GetProperty(nameof(MatchBase.RegexMatch)).GetMethod);
-            var getGroupCollection_Item = asm.MainModule.Import(typeof(GroupCollection).GetProperty("Item", new[] { typeof(string) }).GetMethod);
-            var getIEnumerator_Current = asm.MainModule.Import(typeof(IEnumerator).GetProperty(nameof(IEnumerator.Current)).GetMethod);
-            var ctorMatchBase = asm.MainModule.Import(typeof(MatchBase).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(Match) }, null));
-            var ctorNonNamedMatch = asm.MainModule.Import(typeof(NonNamedMatch).GetConstructor(new[] { typeof(Match) }));
-            var ctorList_NonNamedMatch = asm.MainModule.Import(typeof(List<NonNamedMatch>).GetConstructor(Type.EmptyTypes));
-            var ctorSecurityRulesAttributes = asm.MainModule.Import(typeof(SecurityRulesAttribute).GetConstructor(new[] { typeof(SecurityRuleSet) }));
-            var ctorRegex = asm.MainModule.Import(typeof(Regex).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null));
-            var ctorRegexBase = asm.MainModule.Import(typeof(RegexBase).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null));
-            var mtdRegex_Match_string = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Match), new[] { typeof(string) }));
-            var mtdRegex_Match_string_int = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Match), new[] { typeof(string), typeof(int) }));
-            var mtdRegex_Match_string_int_int = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Match), new[] { typeof(string), typeof(int), typeof(int) }));
-            var mtdRegex_Matches_string = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Matches), new[] { typeof(string) }));
-            var mtdRegex_Matches_string_int = asm.MainModule.Import(typeof(Regex).GetMethod(nameof(Regex.Matches), new[] { typeof(string), typeof(int) }));
-            var mtdIEnumerable_GetEnumerator = asm.MainModule.Import(typeof(IEnumerable).GetMethod(nameof(IEnumerable.GetEnumerator)));
-            var mtdIEnumerator_MoveNext = asm.MainModule.Import(typeof(IEnumerator).GetMethod(nameof(IEnumerator.MoveNext)));
-            var mtdList_NonNamedMatch_Add = asm.MainModule.Import(typeof(List<NonNamedMatch>).GetMethod(nameof(List<NonNamedMatch>.Add)));
-
-            var regexes = regexCompilationInfos.ToDictionary(i => (string.IsNullOrEmpty(i.Namespace) ? string.Empty : (i.Namespace + ".")) + i.Name, i => new Regex(i.Pattern, i.Options));
+            InitializeMetadataReferences(asm);
+ var regexes = regexCompilationInfos.ToDictionary(i => (string.IsNullOrEmpty(i.Namespace) ? string.Empty : (i.Namespace + ".")) + i.Name, i => new Regex(i.Pattern, i.Options));
             //TODO: Remove next 2 lines
-            //asm.CustomAttributes.Remove(asm.CustomAttributes.Single(ca => ca.Constructor.DeclaringType.FullName == typeof(SecurityRulesAttribute).FullName));
-            //asm.CustomAttributes.Add(new CustomAttribute(ctorSecurityRulesAttributes) { ConstructorArguments = { new CustomAttributeArgument(trSecurityRuleSet, SecurityRuleSet.Level1) } });
+            asm.CustomAttributes.Remove(asm.CustomAttributes.Single(ca => ca.Constructor.DeclaringType.FullName == typeof(SecurityRulesAttribute).FullName));
+            asm.CustomAttributes.Add(new CustomAttribute(ctorSecurityRulesAttributes) { ConstructorArguments = { new CustomAttributeArgument(trSecurityRuleSet, SecurityRuleSet.Level1) } });
 
-            var ctorRegexResolved = ctorRegex.Resolve();
             foreach (var regexClass in asm.MainModule.Types.Where(t => t.BaseType?.FullName == typeof(Regex).FullName).ToArray())
             {
                 var regex = regexes[regexClass.FullName];
-                ChangeRegexClassBaseType(regexClass, trRegexBase, ctorRegexBase, ctorRegexResolved);
+                ChangeRegexClassBaseType(regexClass);
                 int ignore;
                 var groups = regex.GetGroupNames().Where(gn => !int.TryParse(gn, NumberStyles.Any, CultureInfo.InvariantCulture, out ignore)).ToArray();
-                TypeReference trIReadOnlyCollection_MatchClass;
-                TypeReference trList_MatchClass;
-                TypeReference trMatchClass;
-                MethodReference ctorList_MatchClass;
-                MethodReference ctorMatchClass;
-                MethodReference mtdList_MatchClass_Add;
 
                 if (groups.Length > 0)
                 {
-                    TypeDefinition defMatchClass = CreateMatchClass(regexClass.Name, groups, trGroup, trMatchBase, trMatch, trVoid, ctorMatchBase, getGroupCollection_Item, getMatch_Groups, getMatchBase_Groups);
+                    TypeDefinition defMatchClass = CreateMatchClass(regexClass.Name, groups);
                     regexClass.NestedTypes.Add(defMatchClass);
 
                     trMatchClass = defMatchClass;
@@ -403,27 +446,17 @@ namespace Dzonny.RegexCompiler.Compilation
                 }
 
                 //Match(string);
-                regexClass.Methods.Add(CreateRegexClassMatchFunction_String(trMatchClass, trRegex, trString, ctorMatchClass, mtdRegex_Match_string));
+                regexClass.Methods.Add(CreateRegexClassMatchFunction_String());
                 //Match(string, int);
-                regexClass.Methods.Add(CreateRegexClassMatchFunction_String_Int32(trInt32, trMatchClass, trRegex, trString, ctorMatchClass, mtdRegex_Match_string_int));
+                regexClass.Methods.Add(CreateRegexClassMatchFunction_String_Int32());
                 //Match(string, int, int);
-                regexClass.Methods.Add(CreateRegexClassMatchFunction_String_Int32_Int32(trInt32, trMatchClass, trRegex, trString, ctorMatchClass, mtdRegex_Match_string_int_int));
+                regexClass.Methods.Add(CreateRegexClassMatchFunction_String_Int32_Int32());
 
                 //Matches(string);
-                regexClass.Methods.Add(
-                    CreateRegexClassMatchesFunction_String(
-                        trIEnumerable, trIEnumerator, trIReadOnlyCollection_MatchClass, trList_MatchClass, trMatch, trString, ctorList_MatchClass, ctorMatchClass, getIEnumerator_Current, getMatchBase_RegexMatch,
-                        mtdIEnumerable_GetEnumerator, mtdIEnumerator_MoveNext, mtdList_MatchClass_Add, mtdRegex_Matches_string
-                    )
-                );
+                regexClass.Methods.Add(CreateRegexClassMatchesFunction_String());
 
                 //Matches(string, int);
-                regexClass.Methods.Add(
-                    CreateRegexClassMatchesFunction_String_Int32(
-                        trIEnumerable, trIEnumerator, trInt32, trIReadOnlyCollection_MatchClass, trList_MatchClass, trMatch, trString, ctorList_MatchClass,
-                        ctorMatchClass, getIEnumerator_Current, getMatchBase_RegexMatch, mtdIEnumerable_GetEnumerator, mtdIEnumerator_MoveNext, mtdList_MatchClass_Add, mtdRegex_Matches_string_int
-                    )
-                );
+                regexClass.Methods.Add(CreateRegexClassMatchesFunction_String_Int32());
             }
             if (Settings.Snk != null)
                 using (var fs = IO.File.Open(Settings.Snk, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read))
@@ -443,7 +476,7 @@ namespace Dzonny.RegexCompiler.Compilation
 
         /// <summary>Changes base type of regular expression class from <see cref="Regex"/> to <see cref="RegexBase"/></summary>
         /// <param name="regexClass">Definition of the class to change base class off</param>
-        private void ChangeRegexClassBaseType(TypeDefinition regexClass, TypeReference trRegexBase, MethodReference ctorRegexBase, MethodDefinition ctorRegexResolved)
+        private void ChangeRegexClassBaseType(TypeDefinition regexClass)
         {
             regexClass.BaseType = trRegexBase;
             foreach (var mtd in regexClass.Methods)
@@ -466,20 +499,17 @@ namespace Dzonny.RegexCompiler.Compilation
         /// <param name="regexName">Name of the regular expression</param>
         /// <param name="groups">Names of named capture groups</param>
         /// <returns>Definition of created class</returns>
-        private TypeDefinition CreateMatchClass(
-            string regexName, string[] groups, TypeReference trGroup, TypeReference trMatchBase, TypeReference trMatch, TypeReference trVoid, MethodReference ctorMatchBase,
-            MethodReference getGroupCollection_Item, MethodReference getMatch_Groups, MethodReference getMatchBase_Groups
-        )
+        private TypeDefinition CreateMatchClass(string regexName, string[] groups)
         {
             var defMatchClass = new TypeDefinition(null, regexName + "Match", TypeAttributes.Class | TypeAttributes.NestedPublic | TypeAttributes.Sealed)
             {
                 BaseType = trMatchBase,
-                Methods = { CreateMatchClassCTor(trMatch, trVoid, ctorMatchBase) }
+                Methods = { CreateMatchClassCTor() }
             };
 
             foreach (var gName in groups)
             {
-                var prp = CreateMatchClassNamedGroupProperty(gName, trGroup, trMatch, trMatchBase, getGroupCollection_Item, getMatchBase_Groups);
+                var prp = CreateMatchClassNamedGroupProperty(gName);
                 defMatchClass.Methods.Add(prp.GetMethod);
                 defMatchClass.Properties.Add(prp);
             }
@@ -488,7 +518,7 @@ namespace Dzonny.RegexCompiler.Compilation
 
         /// <summary>Creates a constructor for match class</summary>
         /// <returns>Constructor definition</returns>
-        private MethodDefinition CreateMatchClassCTor(TypeReference trMatch, TypeReference trVoid, MethodReference ctorMatchBase)
+        private MethodDefinition CreateMatchClassCTor()
         {
             //MatchClass..ctor
             var ctor = new MethodDefinition(".ctor", MethodAttributes.Assembly | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName, trVoid)
@@ -509,10 +539,7 @@ namespace Dzonny.RegexCompiler.Compilation
         /// <summary>Creates a property for accessing named capture group</summary>
         /// <param name="groupName">Name of the group</param>
         /// <returns>Property definition</returns>
-        private static PropertyDefinition CreateMatchClassNamedGroupProperty(
-            string groupName, TypeReference trGroup, TypeReference trMatch, TypeReference trMatchBase, MethodReference getGroupCollection_Item,
-            MethodReference getMatchBase_Groups
-        )
+        private PropertyDefinition CreateMatchClassNamedGroupProperty(string groupName)
         {
             //MatchClass.get_{GroupName}
             var getter = new MethodDefinition("get_" + groupName, MethodAttributes.Public | MethodAttributes.SpecialName, trGroup);
@@ -530,8 +557,7 @@ namespace Dzonny.RegexCompiler.Compilation
             return new PropertyDefinition(groupName, PropertyAttributes.None, trGroup) { GetMethod = getter };
         }
 
-        private MethodDefinition CreateRegexClassMatchFunction_String
-            (TypeReference trMatchClass, TypeReference trRegex, TypeReference trString, MethodReference ctorMatchClass, MethodReference mtdRegex_Match_string)
+        private MethodDefinition CreateRegexClassMatchFunction_String()
         {
             var m = new MethodDefinition("Match", MethodAttributes.Public, trMatchClass)
             { Parameters = { new ParameterDefinition("input", ParameterAttributes.In, trString) } };
@@ -547,8 +573,7 @@ namespace Dzonny.RegexCompiler.Compilation
             return m;
         }
 
-        private static MethodDefinition CreateRegexClassMatchFunction_String_Int32
-            (TypeReference trInt32, TypeReference trMatchClass, TypeReference trRegex, TypeReference trString, MethodReference ctorMatchClass, MethodReference mtdRegex_Match_string_int)
+        private MethodDefinition CreateRegexClassMatchFunction_String_Int32()
         {
             var m = new MethodDefinition("Match", MethodAttributes.Public, trMatchClass)
             { Parameters = { new ParameterDefinition("input", ParameterAttributes.In, trString), new ParameterDefinition("startAt", ParameterAttributes.In, trInt32) } };
@@ -565,8 +590,7 @@ namespace Dzonny.RegexCompiler.Compilation
             return m;
         }
 
-        private MethodDefinition CreateRegexClassMatchFunction_String_Int32_Int32
-            (TypeReference trInt32, TypeReference trMatchClass, TypeReference trRegex, TypeReference trString, MethodReference ctorMatchClass, MethodReference mtdRegex_Match_string_int_int)
+        private MethodDefinition CreateRegexClassMatchFunction_String_Int32_Int32()
         {
             var m = new MethodDefinition("Match", MethodAttributes.Public, trMatchClass)
             {
@@ -590,32 +614,22 @@ namespace Dzonny.RegexCompiler.Compilation
             return m;
         }
 
-        private MethodDefinition CreateRegexClassMatchesFunction_String(
-            TypeReference trIEnumerable, TypeReference trIEnumerator, TypeReference trIReadOnlyCollection_MatchClass, TypeReference trList_MatchClass, TypeReference trMatch, TypeReference trString,
-            MethodReference ctorList_MatchClass, MethodReference ctorMatchClass, MethodReference getIEnumerator_Current, MethodReference getMatchBase_RegexMatch, MethodReference mtdIEnumerable_GetEnumerator,
-            MethodReference mtdIEnumerator_MoveNext, MethodReference mtdList_MatchClass_Add, MethodReference mtdRegex_Matches_string
-        )
+        private MethodDefinition CreateRegexClassMatchesFunction_String()
         {
             var m = new MethodDefinition("Matches", MethodAttributes.Public, trIReadOnlyCollection_MatchClass)
             { Parameters = { new ParameterDefinition("input", ParameterAttributes.In, trString), } };
             var il = m.Body.GetILProcessor();
-            GenerateMatchesMethodBody(
-                m, il, trIEnumerator, trList_MatchClass, trMatch, ctorList_MatchClass, ctorMatchClass, getIEnumerator_Current, mtdIEnumerable_GetEnumerator, mtdIEnumerator_MoveNext,
-                mtdList_MatchClass_Add, stackSize =>
-                {
-                    m.Body.Instructions.Add(il.Create(OpCodes.Ldarg_1));                       // ldarg.1
-                    m.Body.Instructions.Add(il.Create(OpCodes.Call, mtdRegex_Matches_string)); // call Regex.Matches(String)
-                    return stackSize + 1;
-                }
+            GenerateMatchesMethodBody(m, il, stackSize =>
+               {
+                   m.Body.Instructions.Add(il.Create(OpCodes.Ldarg_1));                       // ldarg.1
+                   m.Body.Instructions.Add(il.Create(OpCodes.Call, mtdRegex_Matches_string)); // call Regex.Matches(String)
+                   return stackSize + 1;
+               }
             );
             return m;
         }
 
-        private MethodDefinition CreateRegexClassMatchesFunction_String_Int32(
-            TypeReference trIEnumerable, TypeReference trIEnumerator, TypeReference trInt32, TypeReference trIReadOnlyCollection_MatchClass, TypeReference trList_MatchClass, TypeReference trMatch,
-            TypeReference trString, MethodReference ctorList_MatchClass, MethodReference ctorMatchClass, MethodReference getIEnumerator_Current, MethodReference getMatchBase_RegexMatch,
-            MethodReference mtdIEnumerable_GetEnumerator, MethodReference mtdIEnumerator_MoveNext, MethodReference mtdList_MatchClass_Add, MethodReference mtdRegex_Matches_string_int
-        )
+        private MethodDefinition CreateRegexClassMatchesFunction_String_Int32()
         {
             var m = new MethodDefinition("Matches", MethodAttributes.Public, trIReadOnlyCollection_MatchClass)
             {
@@ -626,8 +640,8 @@ namespace Dzonny.RegexCompiler.Compilation
             };
             var il = m.Body.GetILProcessor();
             GenerateMatchesMethodBody(
-                m, il, trIEnumerator, trList_MatchClass, trMatch, ctorList_MatchClass, ctorMatchClass, getIEnumerator_Current, mtdIEnumerable_GetEnumerator, mtdIEnumerator_MoveNext,
-                mtdList_MatchClass_Add, stackSize =>
+                m, il,
+                stackSize =>
                 {
                     m.Body.Instructions.Add(il.Create(OpCodes.Ldarg_1));                           // ldarg.1
                     m.Body.Instructions.Add(il.Create(OpCodes.Ldarg_2));                           // ldarg.2
@@ -638,11 +652,7 @@ namespace Dzonny.RegexCompiler.Compilation
             return m;
         }
 
-        private void GenerateMatchesMethodBody(
-            MethodDefinition m, ILProcessor il, TypeReference trIEnumerator, TypeReference trList_MatchClass, TypeReference trMatch, MethodReference ctorList_MatchClass, MethodReference ctorMatchClass,
-            MethodReference getIEnumerator_Current, MethodReference mtdIEnumerable_GetEnumerator, MethodReference mtdIEnumerator_MoveNext, MethodReference mtdList_MatchClass_Add,
-            Func<int, int> generateBaseCall
-        )
+        private void GenerateMatchesMethodBody(MethodDefinition m, ILProcessor il, Func<int, int> generateBaseCall)
         {
             int maxStack;
             m.Body.InitLocals = true;

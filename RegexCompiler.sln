@@ -19,6 +19,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexHelpers", "RegexHelpers\RegexHelpers.csproj", "{B1BF5D57-9AE6-469A-8358-E9481A05B958}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project System", "Project System", "{6E8D95E7-EEF9-4006-AEAC-39C8C1F548D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexProj.ProjectTemplate", "Project system\RegexProj.ProjectTemplate\RegexProj.ProjectTemplate.csproj", "{C5FB8941-F7AE-4EB7-B948-B070822B5593}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexProj.ProjectType", "Project system\RegexProj.ProjectType\RegexProj.ProjectType.csproj", "{E93E20E5-23FD-4C2C-B8B5-1388EB46D1D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexProj.Tasks", "Project system\RegexProj.Tasks\RegexProj.Tasks.csproj", "{3DC58AB3-F67C-4481-A981-5E8A194118AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,8 +45,25 @@ Global
 		{B1BF5D57-9AE6-469A-8358-E9481A05B958}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1BF5D57-9AE6-469A-8358-E9481A05B958}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1BF5D57-9AE6-469A-8358-E9481A05B958}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5FB8941-F7AE-4EB7-B948-B070822B5593}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5FB8941-F7AE-4EB7-B948-B070822B5593}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5FB8941-F7AE-4EB7-B948-B070822B5593}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5FB8941-F7AE-4EB7-B948-B070822B5593}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E93E20E5-23FD-4C2C-B8B5-1388EB46D1D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E93E20E5-23FD-4C2C-B8B5-1388EB46D1D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E93E20E5-23FD-4C2C-B8B5-1388EB46D1D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E93E20E5-23FD-4C2C-B8B5-1388EB46D1D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DC58AB3-F67C-4481-A981-5E8A194118AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DC58AB3-F67C-4481-A981-5E8A194118AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DC58AB3-F67C-4481-A981-5E8A194118AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DC58AB3-F67C-4481-A981-5E8A194118AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C5FB8941-F7AE-4EB7-B948-B070822B5593} = {6E8D95E7-EEF9-4006-AEAC-39C8C1F548D9}
+		{E93E20E5-23FD-4C2C-B8B5-1388EB46D1D9} = {6E8D95E7-EEF9-4006-AEAC-39C8C1F548D9}
+		{3DC58AB3-F67C-4481-A981-5E8A194118AE} = {6E8D95E7-EEF9-4006-AEAC-39C8C1F548D9}
 	EndGlobalSection
 EndGlobal
