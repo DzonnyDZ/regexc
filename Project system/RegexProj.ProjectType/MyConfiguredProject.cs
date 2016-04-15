@@ -9,20 +9,10 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
 ***************************************************************************/
 
-namespace Dzonny.ILProj
-{
-    using System;
-    using System.ComponentModel.Composition;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Threading.Tasks;
-    using System.Threading.Tasks.Dataflow;
-    using Microsoft.VisualStudio.ProjectSystem;
-    using Microsoft.VisualStudio.ProjectSystem.Designers;
-    using Microsoft.VisualStudio.ProjectSystem.Utilities;
-    using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Interop;
-    using Task = System.Threading.Tasks.Task;
+using System.Diagnostics.CodeAnalysis;
 
+namespace Dzonny.RegexCompiler.RegexProj
+{
     [Export]
     [AppliesTo(MyUnconfiguredProject.UniqueCapability)]
     internal class MyConfiguredProject

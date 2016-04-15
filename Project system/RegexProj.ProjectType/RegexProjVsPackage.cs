@@ -9,17 +9,9 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
 ***************************************************************************/
 
-using System;
-using System.ComponentModel;
-using System.Linq;
 using System.Runtime.InteropServices;
-using Dzonny.VSLangProj;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Task = System.Threading.Tasks.Task;
 
-namespace Dzonny.ILProj
+namespace Dzonny.RegexCompiler.RegexProj
 {
 
     /// <summary>This class implements the package exposed by this assembly.</summary>

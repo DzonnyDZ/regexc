@@ -6,6 +6,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -17,9 +18,9 @@
     <ProjectGuid>{E93E20E5-23FD-4C2C-B8B5-1388EB46D1D9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Dzonny.ILProj</RootNamespace>
-    <AssemblyName>Dzonny.ILProj</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RootNamespace>Dzonny.RegexCompiler.RegexProj</RootNamespace>
+    <AssemblyName>Dzonny.RegexCompiler.RegexProj</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Key.snk</AssemblyOriginatorKeyFile>
@@ -57,30 +58,26 @@
     <Reference Include="Microsoft.Build.Utilities.Core, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.ComponentModelHost" />
-    <Reference Include="Microsoft.VisualStudio.Composition, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Composition.14.0.50715-pre\lib\net451\Microsoft.VisualStudio.Composition.dll</HintPath>
+    <Reference Include="Microsoft.VisualStudio.Composition">
+      <HintPath>..\..\packages\Microsoft.VisualStudio.Composition.15.0.16-pre\lib\net451\Microsoft.VisualStudio.Composition.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.Composition.Configuration, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Composition.14.0.50715-pre\lib\net451\Microsoft.VisualStudio.Composition.Configuration.dll</HintPath>
+    <Reference Include="Microsoft.VisualStudio.Composition.Configuration">
+      <HintPath>..\..\packages\Microsoft.VisualStudio.Composition.15.0.16-pre\lib\net451\Microsoft.VisualStudio.Composition.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Designer.Interfaces, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.Interop, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.14.0.50729-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.Interop.dll</HintPath>
+    <Reference Include="Microsoft.VisualStudio.ProjectSystem">
+      <HintPath>..\..\packages\Microsoft.VisualStudio.ProjectSystem.15.0.183-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.Utilities.v14.0, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.14.0.50729-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.Utilities.v14.0.dll</HintPath>
+    <Reference Include="Microsoft.VisualStudio.ProjectSystem.Interop">
+      <HintPath>..\..\packages\Microsoft.VisualStudio.ProjectSystem.15.0.183-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.V14Only, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.14.0.50729-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.V14Only.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.ProjectSystem.VS.V14Only, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.ProjectSystem.14.0.50729-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.VS.V14Only.dll</HintPath>
+    <Reference Include="Microsoft.VisualStudio.ProjectSystem.VS">
+      <HintPath>..\..\packages\Microsoft.VisualStudio.ProjectSystem.15.0.183-pre\lib\net451\Microsoft.VisualStudio.ProjectSystem.VS.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop" />
@@ -106,19 +103,19 @@
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.14.0" />
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Microsoft.VisualStudio.Threading, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Threading.14.0.50702\lib\net45\Microsoft.VisualStudio.Threading.dll</HintPath>
+    <Reference Include="Microsoft.VisualStudio.Threading">
+      <HintPath>..\..\packages\Microsoft.VisualStudio.Threading.15.0.20-pre\lib\net45\Microsoft.VisualStudio.Threading.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.Validation, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Validation.14.0.50702\lib\net45\Microsoft.VisualStudio.Validation.dll</HintPath>
+    <Reference Include="Microsoft.VisualStudio.Validation">
+      <HintPath>..\..\packages\Microsoft.VisualStudio.Validation.15.0.11-pre\lib\net45\Microsoft.VisualStudio.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.1.38.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.1.38-beta-23225\lib\dotnet\System.Collections.Immutable.dll</HintPath>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.1.38-beta-23516\lib\dotnet5.1\System.Collections.Immutable.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
@@ -167,15 +164,11 @@
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <VSIXSubPath>ProjectTemplates</VSIXSubPath>
     </ProjectReference>
-    <ProjectReference Include="..\ILProj.Tasks\ILProj.Tasks.csproj">
+    <ProjectReference Include="..\RegexProj.Tasks\RegexProj.Tasks.csproj">
       <Project>{3DC58AB3-F67C-4481-A981-5E8A194118AE}</Project>
       <Name>ILProj.Tasks</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-    </ProjectReference>
-    <ProjectReference Include="..\VSLangProj.Shared\VSLangProj.Shared\VSLangProj.Shared.csproj">
-      <Project>{600a75f3-d6bb-4cb1-bcfb-79928fd01115}</Project>
-      <Name>VSLangProj.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <!-- 
@@ -185,7 +178,7 @@
     <EmbeddedResource Include="Resources.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ILProjVsPackage.resx">
+    <EmbeddedResource Include="RegexProjVsPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -194,28 +187,20 @@
     <Compile Include="MyConfiguredProject.cs" />
     <Compile Include="MyUnconfiguredProject.cs" />
     <Compile Include="ProjectProperties.cs" />
-    <Compile Include="ILProjVsPackage.cs" />
+    <Compile Include="RegexProjVsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ILProj.ico">
+    <Content Include="RegexProj.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Screenshot.png">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\LICENSE">
-      <Link>LICENSE</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="..\Key.snk">
-      <Link>Key.snk</Link>
-    </None>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest" />
@@ -305,6 +290,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Analyzer Include="..\..\packages\Microsoft.VisualStudio.ProjectSystem.Analyzers.15.0.183-pre\analyzers\Microsoft.VisualStudio.ProjectSystem.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.0.20-pre\analyzers\Microsoft.VisualStudio.Threading.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.ProjectSystem.Analyzers.14.0.50729-pre\tools\Microsoft.VisualStudio.ProjectSystem.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.14.0.50702-pre\tools\Microsoft.VisualStudio.Threading.Analyzers.dll" />
   </ItemGroup>
@@ -345,7 +332,13 @@
     <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.0.50703\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.0.50703\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets'))" />
     <Error Condition="!Exists('..\packages\MSBuild.Extension.Pack.1.6.0\build\net40\MSBuild.Extension.Pack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.Extension.Pack.1.6.0\build\net40\MSBuild.Extension.Pack.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.14.0.50729-pre\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.14.0.50729-pre\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.15.0.183-pre\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.15.0.183-pre\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.25\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.25\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets'))" />
+    <Error Condition="!Exists('..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets'))" />
   </Target>
   <Import Project="..\packages\MSBuild.Extension.Pack.1.6.0\build\net40\MSBuild.Extension.Pack.targets" Condition="Exists('..\packages\MSBuild.Extension.Pack.1.6.0\build\net40\MSBuild.Extension.Pack.targets')" />
   <Import Project="..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.14.0.50729-pre\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.14.0.50729-pre\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets')" />
+  <Import Project="..\..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.15.0.183-pre\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets" Condition="Exists('..\..\packages\Microsoft.VisualStudio.ProjectSystem.SDK.Tools.15.0.183-pre\build\Microsoft.VisualStudio.ProjectSystem.Sdk.Tools.targets')" />
+  <Import Project="..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.25\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets" Condition="Exists('..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.25\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets')" />
+  <Import Project="..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets" Condition="Exists('..\..\packages\MSBuild.Extension.Pack.1.8.0\build\net40\MSBuild.Extension.Pack.targets')" />
 </Project>

@@ -9,22 +9,8 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 
 ***************************************************************************/
 
-using System.Windows;
-
-namespace Dzonny.ILProj
+namespace Dzonny.RegexCompiler.RegexProj
 {
-    using System;
-    using System.ComponentModel.Composition;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Threading.Tasks;
-    using System.Threading.Tasks.Dataflow;
-    using Microsoft.VisualStudio.ProjectSystem;
-    using Microsoft.VisualStudio.ProjectSystem.Designers;
-    using Microsoft.VisualStudio.ProjectSystem.Utilities;
-    using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Interop;
-    using Task = System.Threading.Tasks.Task;
-
     [Export]
     [AppliesTo(MyUnconfiguredProject.UniqueCapability)]
     [ProjectTypeRegistration(ILProjProjectSystemPackage.ProjectTypeGuid, "ILProj", "#2", ProjectExtension, Language, resourcePackageGuid: ILProjProjectSystemPackage.PackageGuid, PossibleProjectExtensions = ProjectExtension, ProjectTemplatesDir = @"..\..\Templates\Projects\MyCustomProject")]

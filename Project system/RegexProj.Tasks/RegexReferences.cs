@@ -1,8 +1,7 @@
-﻿using System;
-using IO = System.IO;
+﻿using IO = System.IO;
 using Task = Microsoft.Build.Utilities.Task;
 
-namespace Dzonny.ILProj
+namespace Dzonny.RegexCompiler.RegexProj
 {
     /// <summary>MSBuild task that generates references in CIL format</summary>
     public class ILReferences : Task

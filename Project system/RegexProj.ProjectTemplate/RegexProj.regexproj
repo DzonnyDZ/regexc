@@ -1,39 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup Label="Globals">
-        <CustomProjectExtensionsPath>$(LocalAppData)\CustomProjectSystems\ILProj\</CustomProjectExtensionsPath>
+        <CustomProjectExtensionsPath>$(LocalAppData)\CustomProjectSystems\RegexProj\</CustomProjectExtensionsPath>
         <SchemaVersion>2.0</SchemaVersion>
     </PropertyGroup>
 
     <Import Project="$(CustomProjectExtensionsPath)CustomProject.Default.props" />
     <PropertyGroup>
-        <OutputType>EXE</OutputType>
+        <OutputType>DLL</OutputType>
         <TargetExtension Condition="'$(OutputType)'=='DLL'">.dll</TargetExtension>
-        <TargetExtension Condition="'$(TargetExtension)'==''">.exe</TargetExtension>
         <OutputName>$(AssemblyName)$(TargetExtension)</OutputName>
         <TargetPath>$(OutputPath)$(OutputName)</TargetPath>
         <Optimize>false</Optimize>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" Label="Configuration">
-        <Debug>true</Debug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" Label="Configuration">
         <Debug>false</Debug>
     </PropertyGroup>
 
-  <Import Project="$(CustomProjectExtensionsPath)CustomProject.props" />
+    <Import Project="$(CustomProjectExtensionsPath)CustomProject.props" />
     <ItemGroup Label="References">
         <Reference Include="mscorlib" />
         <Reference Include="System" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="Properties\AssemblyInfo.il">
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Include="Program.il">
-            <SubType>Code</SubType>
-        </Compile>
+        <Compile Include="Regexes.regex"/>
     </ItemGroup>
 
     <Import Project="$(CustomProjectExtensionsPath)CustomProjectCs.targets" />

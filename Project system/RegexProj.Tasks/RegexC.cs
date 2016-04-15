@@ -1,11 +1,10 @@
 ﻿using System;
-using static System.Globalization.CultureInfo;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text;
 using Microsoft.Build.Framework;
-using Dzonny.VSLangProj;
 
-namespace Dzonny.ILProj
+namespace Dzonny.RegexCompiler.RegexProj
 {
     /// <summary>Wraps CIL compiler (ilasm) as MSBuild task</summary>
     public class ILAsm : CommandLineTask
@@ -188,17 +187,17 @@ namespace Dzonny.ILProj
                 foreach (var i in Includes)
                     cmd.Append($"/INCLUDE=\"{i}\" ");
 
-            if (subsystem.HasValue) cmd.Append(((FormattableString)$"/SUBSYSTEM={SubSystem} ").ToString(InvariantCulture));
+            if (subsystem.HasValue) cmd.Append(((FormattableString)$"/SUBSYSTEM={SubSystem} ").ToString(CultureInfo.InvariantCulture));
 
             if (!string.IsNullOrEmpty(SubsystemVersion)) cmd.Append($"/SSVER=\"{SubsystemVersion}\" ");
 
-            if (flags.HasValue) cmd.Append(((FormattableString)$"/FLAGS={Flags} ").ToString(InvariantCulture));
+            if (flags.HasValue) cmd.Append(((FormattableString)$"/FLAGS={Flags} ").ToString(CultureInfo.InvariantCulture));
 
-            if (alignment.HasValue) cmd.Append(((FormattableString)$"/ALIGNMENT={alignment} ").ToString(InvariantCulture));
+            if (alignment.HasValue) cmd.Append(((FormattableString)$"/ALIGNMENT={alignment} ").ToString(CultureInfo.InvariantCulture));
 
-            if (@base.HasValue) cmd.Append(((FormattableString)$"/BASE={Base} ").ToString(InvariantCulture));
+            if (@base.HasValue) cmd.Append(((FormattableString)$"/BASE={Base} ").ToString(CultureInfo.InvariantCulture));
 
-            if (stack.HasValue) cmd.Append(((FormattableString)$"/STACK={Stack} ").ToString(InvariantCulture));
+            if (stack.HasValue) cmd.Append(((FormattableString)$"/STACK={Stack} ").ToString(CultureInfo.InvariantCulture));
 
             if (!string.IsNullOrEmpty(MetadataVersion)) cmd.Append($"/MDV=\"{MetadataVersion}\" ");
 
