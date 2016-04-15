@@ -17,6 +17,9 @@ namespace Dzonny.RegexCompiler
                 Console.WriteLine("/assembly {name} - Name of assembly");
                 Console.WriteLine("/ver {version} - Assembly version");
                 Console.WriteLine("/nop - Just compile the regexes, don't add properties for named groups");
+                Console.WriteLine("/obj {path} - Path to temporary folder to use during generation");
+                Console.Write("/out {path} - Path where to store generated DLL");
+                Console.WriteLine("/snk {path} - Use given strong name key to sign the generated assembkly");
                 Environment.Exit(1);
             }
 
@@ -51,7 +54,9 @@ namespace Dzonny.RegexCompiler
             /// <summary>Value of /obj parameter</summary>
             Obj,
             /// <summary>Value for /out parameter</summary>
-            Out
+            Out,
+            /// <summary>Value for /snk parameter</summary>
+            Snk
         }
 
         /// <param name="args">Command line arguments</param>
@@ -78,6 +83,7 @@ namespace Dzonny.RegexCompiler
                             case "/ver": state = ParamStates.Version; break;
                             case "/out": state = ParamStates.Out; break;
                             case "/obj": state = ParamStates.Obj; break;
+                            case "/snk": state = ParamStates.Snk; break;
                             default: ret.Files.Add(arg); break;
                         }
                         break;
@@ -101,6 +107,11 @@ namespace Dzonny.RegexCompiler
                     case ParamStates.Out:
                         if (ret.Output != null) throw new ArgumentException("Output folder specified more than once", "/out");
                         ret.Output = arg;
+                        state = ParamStates.Files;
+                        break;
+                    case ParamStates.Snk:
+                        if (ret.Snk != null) throw new ArgumentException("SNK path specified more than once", "/snk");
+                        ret.Snk = arg;
                         state = ParamStates.Files;
                         break;
                 }

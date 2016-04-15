@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace Dzonny.RegexCompiler.Compilation
 {
@@ -36,7 +37,10 @@ namespace Dzonny.RegexCompiler.Compilation
                 MessageSink = MessageSink,
                 PostProcess = PostProcess,
                 AssemblyName = AssemblyName,
-                Files = Files
+                Files = Files,
+                Output = Output,
+                ObjDir = ObjDir,
+                Snk = Snk
             };
         }
 
@@ -79,11 +83,15 @@ namespace Dzonny.RegexCompiler.Compilation
 
         /// <summary>Gets or sets path of output file (DLL) where regexes will be compiled to</summary>
         /// <value>When null regexes will be compiled to file called <see cref="AssemblyName"/>.dll in current directory</value>
-        public string    Output { get; set; }
+        public string Output { get; set; }
         /// <summary>Gets or sets path to temporary directory where the process stores it's temporary files</summary>
         /// <value>When null a temporary directory is used and then deleted</value>
         /// <remarks>The directory does not have to exists. It will be created.</remarks>
         public string ObjDir { get; set; }
+
+        /// <summary>Gets or sets path to strong name key (SNK( file to sign the generated assembly</summary>
+        /// <value>Null not to sign the generated assembly</value>
+        public string Snk { get; set; }
 
         /// <summary>An implementation of <see cref="IRegexCompilerMessageSink"/> which just throws away all the messages (but it still counts number of errors and warnings)</summary>
         private class BlackHoleMessageSink : IRegexCompilerMessageSink
