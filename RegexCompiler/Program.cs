@@ -47,7 +47,11 @@ namespace Dzonny.RegexCompiler
             /// <summary>Value for /assembly parameter</summary>
             AssemblyName,
             /// <summary>Value for /ver parameter</summary>
-            Version
+            Version,
+            /// <summary>Value of /obj parameter</summary>
+            Obj,
+            /// <summary>Value for /out parameter</summary>
+            Out
         }
 
         /// <param name="args">Command line arguments</param>
@@ -72,6 +76,8 @@ namespace Dzonny.RegexCompiler
                             case "/assembly": state = ParamStates.AssemblyName; break;
                             case "/nop": ret.PostProcess = false; break;
                             case "/ver": state = ParamStates.Version; break;
+                            case "/out": state = ParamStates.Out; break;
+                            case "/obj": state = ParamStates.Obj; break;
                             default: ret.Files.Add(arg); break;
                         }
                         break;
@@ -85,6 +91,16 @@ namespace Dzonny.RegexCompiler
                         if (versionRead) throw new ArgumentException("Version specified twice", "/ver");
                         versionRead = true;
                         ret.Version = Version.Parse(arg);
+                        state = ParamStates.Files;
+                        break;
+                    case ParamStates.Obj:
+                        if (ret.ObjDir != null) throw new ArgumentException("Temporary folder specified more than once", "/obj");
+                        ret.ObjDir = arg;
+                        state = ParamStates.Files;
+                        break;
+                    case ParamStates.Out:
+                        if (ret.Output != null) throw new ArgumentException("Output folder specified more than once", "/out");
+                        ret.Output = arg;
                         state = ParamStates.Files;
                         break;
                 }

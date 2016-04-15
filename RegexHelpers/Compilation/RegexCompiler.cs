@@ -136,9 +136,34 @@ namespace Dzonny.RegexCompiler.Compilation
             if (regexes == null) throw new ArgumentNullException(nameof(regexes));
             var an = GetAssemblyName();
             var arr = regexes.ToArray();
-            Regex.CompileToAssembly(arr, an);
-            if (Settings.PostProcess)
-                PostProcess(arr, an);
+            var objDir = IO.Directory.CreateDirectory(Settings.ObjDir ?? IO.Path.Combine(IO.Path.GetTempPath(), Guid.NewGuid().ToString()));
+            try
+            {
+                var oldcd = Environment.CurrentDirectory;
+                string assemblyPath;
+                try
+                {
+                    Environment.CurrentDirectory = objDir.FullName;
+                    Regex.CompileToAssembly(arr, an);
+                    assemblyPath = IO.Path.Combine(objDir.FullName, an.Name + ".dll");
+                }
+                finally
+                {
+                    Environment.CurrentDirectory = oldcd;
+                }
+                if (Settings.PostProcess)
+                    PostProcess(assemblyPath, arr, an);
+                if (Settings.Output == null)
+                    IO.File.Copy(assemblyPath, IO.Path.GetFileName(assemblyPath), true);
+                else
+                    IO.File.Copy(assemblyPath, Settings.Output, true);
+                IO.File.Delete(assemblyPath);
+            }
+            finally
+            {
+                if (Settings.ObjDir == null)
+                    objDir.Delete();
+            }
         }
         #endregion
 
@@ -150,7 +175,6 @@ namespace Dzonny.RegexCompiler.Compilation
         protected virtual IEnumerable<RegexCompilationInfo> Read(IO.TextReader reader, string path = null)
         {
             if (reader == null) throw new ArgumentNullException(nameof(reader));
-            //TODO: Report lines and files
 
             var regexes = new List<RegexCompilationInfo>();
             int fullLineNumber = 0;
@@ -176,7 +200,7 @@ namespace Dzonny.RegexCompiler.Compilation
                             case 0:
                                 if (!trimmedLine.StartsWith("Name:", StringComparison.InvariantCultureIgnoreCase))
                                 {
-                                    Settings.MessageSink.Report(RegexCompilerMessageSeverity.Error, "1st line of regex block must start with 'Name:'", path, fullLineNumber + 1, 1);
+                                    Settings.MessageSink.Report(RegexCompilerMessageSeverity.Error, RegexCompilerErrorCodes.RXC001, "1st line of regex block must start with 'Name:'", path, fullLineNumber + 1, 1);
                                     return regexes;
                                 }
                                 name = line.Substring(5).Trim();
@@ -193,15 +217,32 @@ namespace Dzonny.RegexCompiler.Compilation
                                                         select p
                                         ).ToArray();
                                     if (optionsParts.Length > 0)
-                                        options = (RegexOptions)Enum.Parse(typeof(RegexOptions), string.Join(",", optionsParts), true);
+                                    {
+                                        if (!Enum.TryParse(string.Join(",", optionsParts), true, out options))
+                                        {
+                                            Settings.MessageSink.Report(RegexCompilerMessageSeverity.Error, RegexCompilerErrorCodes.RXC002, $"Invalid regex options {line.Substring(8).Trim()}", path, fullLineNumber + 1, 1);
+                                            options = RegexOptions.None; //It's error, but we can actually continue
+                                        }
+                                    }
                                     else
+                                    {
                                         options = RegexOptions.None;
+                                    }
                                     if (parts.Contains("Private", StringComparer.InvariantCultureIgnoreCase)) @public = false;
                                     if (parts.Contains("KeepWhite", StringComparer.InvariantCultureIgnoreCase)) keepWhite = true;
                                 }
                                 else if (trimmedLine.StartsWith("Timeout:", StringComparison.InvariantCultureIgnoreCase))
                                 {
-                                    timeout = TimeSpan.Parse(line.Substring(8).Trim(), CultureInfo.InvariantCulture);
+                                    TimeSpan to;
+                                    if (TimeSpan.TryParse(line.Substring(8).Trim(), CultureInfo.InvariantCulture, out to))
+                                    {
+                                        timeout = to;
+                                    }
+                                    else
+                                    {
+                                        Settings.MessageSink.Report(RegexCompilerMessageSeverity.Error, RegexCompilerErrorCodes.RXC003, $"Invalid timeout specified {line.Substring(8).Trim()}", path, fullLineNumber + 1, 1);
+                                        timeout = null; //It's error, but we can actually continue
+                                    }
                                 }
                                 else
                                     goto default;
@@ -209,7 +250,14 @@ namespace Dzonny.RegexCompiler.Compilation
                             default:
                                 if (trimmedLine.StartsWith("------")) //6×
                                 {
-                                    regexes.Add(BuildRegex(regex.ToString(), name, options, timeout, @public));
+                                    try
+                                    {
+                                        regexes.Add(BuildRegex(regex.ToString(), name, options, timeout, @public));
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Settings.MessageSink.Report(RegexCompilerMessageSeverity.Error, RegexCompilerErrorCodes.RXC004, ex.Message, path, fullLineNumber + 1, 1);
+                                    }
                                     blockLineNumber = 0;
                                     regex.Clear();
                                     options = RegexOptions.None;
@@ -233,7 +281,11 @@ namespace Dzonny.RegexCompiler.Compilation
                 }
             }
 
-            if (blockLineNumber == 1 || (blockLineNumber > 1 && regex.Length == 0)) throw new SyntaxErrorException("Unexpected end of file");
+            if (blockLineNumber == 1 || (blockLineNumber > 1 && regex.Length == 0))
+            {
+                Settings.MessageSink.Report(RegexCompilerMessageSeverity.Error, RegexCompilerErrorCodes.RXC005, "Unexpected end of file", path, fullLineNumber + 1, 0);
+                return regexes;
+            }
             if (blockLineNumber > 1)
                 regexes.Add(BuildRegex(regex.ToString(), name, options, timeout, @public));
             return regexes;
@@ -258,9 +310,8 @@ namespace Dzonny.RegexCompiler.Compilation
             return i;
         }
 
-        protected virtual void PostProcess(IEnumerable<RegexCompilationInfo> regexCompilationInfos, AssemblyName assemblyName)
+        protected virtual void PostProcess(string assemblyPath, IEnumerable<RegexCompilationInfo> regexCompilationInfos, AssemblyName assemblyName)
         {
-            var assemblyPath = assemblyName.Name + ".dll";
             var asm = AssemblyDefinition.ReadAssembly(assemblyPath);
 
             var trGroup = asm.MainModule.Import(typeof(Group));

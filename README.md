@@ -15,7 +15,9 @@ regexc files and argumnets
 ### Arguments
 * ``/assembly name`` provides name of the assembly
 * ``/ver`` assembly version
-* ``/nop`` when specified assembly is generated but no post-processing is done. I.e. properties for named capture groups are not gonna be ceated.
+* ``/nop`` when specified assembly is generated but no post-processing is done. I.e. properties for named capture groups are not gonna be created.
+* ``/obj path`` path to a directory to be used as temporary directory for storing files during compilation. The directory does not have to exists.
+* ``/out path`` path to a files where to store the resulting assembly (DLL) to. If not specified output file is created in current directory.
 
 ## Syntax of regex files
 * Each file can contain one or more regexes

@@ -14,11 +14,12 @@ namespace Dzonny.RegexCompiler.Compilation
 
         /// <summary>Receives and processes the compiler message</summary>
         /// <param name="severity">Message severity level</param>
+        /// <param name="code">Identifies the error, warning or info by code</param>
         /// <param name="text">Message text</param>
         /// <param name="fileName">Optional: Name of path of file where the error happened (null when unknown)</param>
         /// <param name="line">Optional: 1-based line number where the error happened (0 when unknown)</param>
         /// <param name="column">Optional: 1-based column number where the error happened (0 when unknown)</param>
-        public void Report(RegexCompilerMessageSeverity severity, string text, string fileName, int line, int column)
+        public void Report(RegexCompilerMessageSeverity severity, RegexCompilerErrorCodes code, string text, string fileName, int line, int column)
         {
             Action<string> log;
             if (severity == RegexCompilerMessageSeverity.Error)
@@ -44,8 +45,8 @@ namespace Dzonny.RegexCompiler.Compilation
                     (line > 0 ? line.ToString() : null) +
                     (column > 0 ? (line > 0 ? "," : null) + column.ToString() : null) +
                     ((column > 0 || line > 0) ? ": " : (fileName == null ? null : " ")) +
-                    severity.ToString() + ": " + text
-                    );
+                    $"{severity}: RXC{code:d3} + text"
+                );
             }
             finally
             {

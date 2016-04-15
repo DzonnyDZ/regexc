@@ -7,7 +7,6 @@ namespace Dzonny.RegexCompiler.Compilation
     /// <summary>Settings of regular expression compiler</summary>
     public class RegexCompilationSettings : ICloneable
     {
-
         /// <summary>Gets collection of files to include in compilation</summary>
         public ICollection<string> Files { get; private set; } = new List<string>();
 
@@ -25,7 +24,6 @@ namespace Dzonny.RegexCompiler.Compilation
                 assemblyName = value;
             }
         }
-
 
         /// <summary>Creates a new object that is a copy of the current instance.</summary>
         /// <returns>A new object that is a copy of this instance.</returns>
@@ -79,16 +77,25 @@ namespace Dzonny.RegexCompiler.Compilation
             }
         }
 
-        /// <summary>An implementation of <see cref="IRegexCompilerMessageSink"/> which justthrows away all the messages (but it still counts number of errors and warnings)</summary>
+        /// <summary>Gets or sets path of output file (DLL) where regexes will be compiled to</summary>
+        /// <value>When null regexes will be compiled to file called <see cref="AssemblyName"/>.dll in current directory</value>
+        public string    Output { get; set; }
+        /// <summary>Gets or sets path to temporary directory where the process stores it's temporary files</summary>
+        /// <value>When null a temporary directory is used and then deleted</value>
+        /// <remarks>The directory does not have to exists. It will be created.</remarks>
+        public string ObjDir { get; set; }
+
+        /// <summary>An implementation of <see cref="IRegexCompilerMessageSink"/> which just throws away all the messages (but it still counts number of errors and warnings)</summary>
         private class BlackHoleMessageSink : IRegexCompilerMessageSink
         {
             /// <summary>Receives and processes the compiler message</summary>
             /// <param name="severity">Message severity level</param>
+            /// <param name="code">Identifies the error, warning or info by code</param>
             /// <param name="text">Message text</param>
             /// <param name="fileName">Optional: Name of path of file where the error happened (null when unknown)</param>
             /// <param name="line">Optional: 1-based line number where the error happened (0 when unknown)</param>
             /// <param name="column">Optional: 1-based column number where the error happened (0 when unknown)</param>
-            public void Report(RegexCompilerMessageSeverity severity, string text, string fileName, int line, int column)
+            public void Report(RegexCompilerMessageSeverity severity, RegexCompilerErrorCodes code, string text, string fileName, int line, int column)
             {
                 switch (severity)
                 {

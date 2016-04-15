@@ -60,6 +60,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Compilation\ConsoleMessageSink.cs" />
+    <Compile Include="Compilation\ErrorCodes.cs" />
     <Compile Include="Compilation\IRegexCompilerMessageSink.cs" />
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="MatchBase.cs" />
