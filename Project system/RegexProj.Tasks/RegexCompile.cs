@@ -22,6 +22,7 @@ namespace Dzonny.RegexCompiler.RegexProj
             settings.MessageSink = this;
         }
 
+        #region Properties
         /// <summary>Gets or sets name and path (including extension) of resulting file</summary>
         /// <seealso cref="RegexCompilationSettings.Output"/>
         [DefaultValue(null)]
@@ -59,6 +60,8 @@ namespace Dzonny.RegexCompiler.RegexProj
         /// <see cref="RegexCompilationSettings.ObjDir"/>
         [DefaultValue(null)]
         public string ObjDir { get { return settings.ObjDir; } set { settings.ObjDir = value; } }
+        #endregion
+
 
         /// <summary>Gets or sets source files</summary>
         [DefaultValue(null), Required]

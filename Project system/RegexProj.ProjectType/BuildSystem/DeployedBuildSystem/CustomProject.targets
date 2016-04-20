@@ -15,7 +15,7 @@
 
     <!-- Capabilities for this project.  Conditions should be based on platform|configuration only. -->
     <ItemGroup>
-        <ProjectCapability Include="ILProj" />
+        <ProjectCapability Include="RegexProj" />
         <ProjectCapability Include="AssemblyReferences;COMReferences;ProjectReferences;WinRTReferences;SDKReferences" />
         <ProjectCapability Include="AllTargetOutputGroups;VisualStudioWellKnownOutputGroups" />
         <ProjectCapability Include="ProjectConfigurationsDeclaredAsItems" />

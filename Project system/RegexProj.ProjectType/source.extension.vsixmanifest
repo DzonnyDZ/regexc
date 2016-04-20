@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="ILProj.ProjectType..42d3ff42-1612-4f1a-9e53-23cb72f33ae8" Version="0.2.0" Language="en-US" Publisher="ILProj.ProjectType" />
-        <DisplayName>ILProj VSIX</DisplayName>
-        <Description xml:space="preserve">A template for creating a CIL assembler projects. Allows to compile CIL (MSIL) assembler directly form Visual Studio.</Description>
-        <MoreInfo>https://github.com/DzonnyDZ/ILProj</MoreInfo>
-        <License>..\LICENSE</License>
-        <Icon>ILProj.ico</Icon>
+        <Identity Id="ILProj.ProjectType..42d3ff42-1612-4f1a-54545575b72f33ae8" Version="0.9.0" Language="en-US" Publisher="RegexProj.ProjectType" />
+        <DisplayName>RegexProj VSIX</DisplayName>
+        <Description xml:space="preserve">A template for creating compiled regular expressions projects. Allows to compile Regular expressions to DLLs form Visual Studio.</Description>
+        <MoreInfo>https://github.com/DzonnyDZ/regexc/issues</MoreInfo>
+        <License>..\..\LICENSE</License>
+        <Icon>RegexProj.ico</Icon>
         <PreviewImage>Screenshot.png</PreviewImage>
-        <Tags>CIL, MSIL, assembly, intermediate language, assembler</Tags>
+        <Tags>regex, regular expression, named capture group, compilation</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="14.0" />
@@ -16,9 +16,9 @@
     <Dependencies>
     </Dependencies>
     <Assets>
-        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="ILProj.ProjectType" Path="|ILProj.ProjectType|"/>
-        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="ILProj.ProjectType" Path="|ILProj.ProjectType;PkgdefProjectOutputGroup|" />
-        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="ILProj.ProjectTemplate" d:TargetPath="|ILProj.ProjectTemplate;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
-        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="ILProj.Tasks" Path="|ILProj.Tasks|" AssemblyName="|ILProj.Tasks;AssemblyName|" />
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="RegexProj.ProjectType" Path="|RegexProj.ProjectType|"/>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="RegexProj.ProjectType" Path="|RegexProj.ProjectType;PkgdefProjectOutputGroup|" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="Project" d:ProjectName="RegexProj.ProjectTemplate" d:TargetPath="|RegexProj.ProjectTemplate;TemplateProjectOutputGroup|" Path="ProjectTemplates" d:VsixSubPath="ProjectTemplates" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="RegexProj.Tasks" Path="|RegexProj.Tasks|" AssemblyName="|RegexProj.Tasks;AssemblyName|" />
     </Assets>
 </PackageManifest>

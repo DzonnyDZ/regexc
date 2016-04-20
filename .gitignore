@@ -234,3 +234,4 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+/Project system/RegexProj.ProjectType/BuildSystem/DeployedBuildSystem/Dzonny.RegexCompiler.RegexProj.Tasks.???

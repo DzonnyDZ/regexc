@@ -13,15 +13,15 @@ namespace Dzonny.RegexCompiler.RegexProj
 {
     [Export]
     [AppliesTo(MyUnconfiguredProject.UniqueCapability)]
-    [ProjectTypeRegistration(ILProjProjectSystemPackage.ProjectTypeGuid, "ILProj", "#2", ProjectExtension, Language, resourcePackageGuid: ILProjProjectSystemPackage.PackageGuid, PossibleProjectExtensions = ProjectExtension, ProjectTemplatesDir = @"..\..\Templates\Projects\MyCustomProject")]
-    [ProvideProjectItem(ILProjProjectSystemPackage.ProjectTypeGuid, "My Items", @"..\..\Templates\ProjectItems\MyCustomProject", 500)]
+    [ProjectTypeRegistration(RegexProjProjectSystemPackage.ProjectTypeGuid, "RegexProj", "#2", ProjectExtension, Language, resourcePackageGuid: RegexProjProjectSystemPackage.PackageGuid, PossibleProjectExtensions = ProjectExtension, ProjectTemplatesDir = @"..\..\Templates\Projects\MyCustomProject")]
+    [ProvideProjectItem(RegexProjProjectSystemPackage.ProjectTypeGuid, "My Items", @"..\..\Templates\ProjectItems\MyCustomProject", 500)]
     internal class MyUnconfiguredProject
     {
         /// <summary>
         /// The file extension used by your project type.
         /// This does not include the leading period.
         /// </summary>
-        internal const string ProjectExtension = "ilproj";
+        internal const string ProjectExtension = "regexroj";
 
         /// <summary>
         /// A project capability that is present in your project type and none others.
@@ -31,9 +31,9 @@ namespace Dzonny.RegexCompiler.RegexProj
         /// <remarks>
         /// This value should be kept in sync with the capability as actually defined in your .targets.
         /// </remarks>
-        internal const string UniqueCapability = "ILProj";
+        internal const string UniqueCapability = "RegexProj";
 
-        internal const string Language = "ILProj";
+        internal const string Language = "RegexProj";
 
         [ImportingConstructor]
         public MyUnconfiguredProject(UnconfiguredProject unconfiguredProject)
