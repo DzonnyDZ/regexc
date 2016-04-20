@@ -21,7 +21,6 @@ namespace Dzonny.RegexCompiler.Compilation
         /// <summary>Exception while preparing <see cref="RegexCompilationInfo"/></summary>
         RXC004 = 4,
         /// <summary>Unexpected end of file</summary>
-        RXC005 = 5
-
+        RXC005 = 5 
     }
 } 

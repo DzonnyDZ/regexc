@@ -11,11 +11,13 @@ namespace Dzonny.RegexCompiler.Compilation
         /// <summary>Gets collection of files to include in compilation</summary>
         public ICollection<string> Files { get; private set; } = new List<string>();
 
-        private string assemblyName = "RegularExpressionsLibrary";
+        private string assemblyName = DefaultAssemblyName;
 
+        /// <summary>Default value of the <see cref="AssemblyName"/> property</summary>
+        public const string DefaultAssemblyName ="RegularExpressionsLibrary";
         /// <summary>Gets or sets name of assembly (without any version, tokens, culture etc.) that will be used for the compiled regular expressions</summary>
         /// <exception cref="ArgumentNullException">Value being set is null</exception>
-        [DefaultValue("RegularExpressionsLibrary")]
+        [DefaultValue(DefaultAssemblyName)]
         public string AssemblyName
         {
             get { return assemblyName; }
@@ -84,6 +86,7 @@ namespace Dzonny.RegexCompiler.Compilation
         /// <summary>Gets or sets path of output file (DLL) where regexes will be compiled to</summary>
         /// <value>When null regexes will be compiled to file called <see cref="AssemblyName"/>.dll in current directory</value>
         public string Output { get; set; }
+
         /// <summary>Gets or sets path to temporary directory where the process stores it's temporary files</summary>
         /// <value>When null a temporary directory is used and then deleted</value>
         /// <remarks>The directory does not have to exists. It will be created.</remarks>
